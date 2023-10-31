@@ -40,11 +40,9 @@ export const handlePurchasePOST = async (req: Request, res: Response) => {
         console.log('first')
         console.log({ purchaseMtResult })
         // Insert into purchase_dt
-        type pdt = purchaseDetailType & { tmp_id?: string };
-        const purchaseDtValues = dts.map((dt: pdt) => (
+        const purchaseDtValues = dts.map((dt: purchaseDetailType) => (
             {
                 org_code,
-                tmp_id: dt.tmp_id,
                 pur_id: purchaseMtResult[0].pur_id,
                 pur_date: purchaseMtResult[0].pur_date,
                 prod_id: dt.prod_id,
