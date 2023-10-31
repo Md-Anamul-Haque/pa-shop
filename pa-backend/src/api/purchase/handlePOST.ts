@@ -3,18 +3,19 @@ import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 import { purchaseDetailType, purchaseMasterType } from '@/types/tables.type';
 
+type reqBodyDataType = {
+    mt: purchaseMasterType;
+    dts: purchaseDetailType[];
+}
 
 
 export const handlePurchasePOST = async (req: Request, res: Response) => {
     await client.connect();
     await client.query('BEGIN');
     try {
-        let returnValue_dts: any[] = [];
         const org_code = req.auth?.user?.org_code;
-        const { mt, dts }: {
-            mt: purchaseMasterType,
-            dts: purchaseDetailType[]
-        } = req.body;
+
+        const { mt, dts }: reqBodyDataType = req.body;
         const pur_date = mt.pur_date;
         const { rows: purchaseMtResult } = await client.query(
             `INSERT INTO purchase_mt (
@@ -54,11 +55,10 @@ export const handlePurchasePOST = async (req: Request, res: Response) => {
         ));
         console.log(purchaseDtValues)
         for (const purchaseDtValue of purchaseDtValues) {
-            const { rows } = await client.query(
+            await client.query(
                 `INSERT INTO purchase_dt(org_code, pur_id, pur_date, prod_id, uom, qty, unit_price) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
                 [purchaseDtValue.org_code, purchaseDtValue.pur_id, purchaseDtValue.pur_date, purchaseDtValue.prod_id, purchaseDtValue.uom, purchaseDtValue.qty, purchaseDtValue.unit_price],
             );
-            returnValue_dts.push({ [purchaseDtValue?.tmp_id || 'tmp_id']: rows[0].pur_dt_id });
         }
         console.log('inserted dt successfully')        // await client.query('INSERT INTO purchase_dt(org_code, pur_id, pur_date, prod_id, uom, qty, unit_price, created_at, updated_at) VALUES %1', ["('org_1', '20', '2023-11-01', 'PROD_1', 'pcs', '5', '200'), ('org_1', '20', '2023-11-01', 'PROD_2', 'pcs', '10', '80')"]);
 
@@ -71,10 +71,7 @@ export const handlePurchasePOST = async (req: Request, res: Response) => {
             resType: 'success',
             status: 'OK',
             message: '',
-            payload: {
-                mt: purchaseMtResult,
-                dts: returnValue_dts
-            } // your can any data for responce
+            // payload:''// your can any data for responce
         });
 
     } catch (error) {
