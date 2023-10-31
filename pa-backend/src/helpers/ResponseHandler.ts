@@ -1,35 +1,43 @@
 import { Response } from "express";
-
+import { StatusCodes } from 'http-status-codes';
 type responseHandlerType = {
-    message?: string
+    message?: string;
+    status?: keyof typeof StatusCodes;
 } & {
     resType?: 'success',
     payload?: any;
+    status?: keyof typeof StatusCodes;
 } | {
     resType: 'error';
     message?: string;
+    status?: keyof typeof StatusCodes;
 } | {
     resType: 'authError';
     message?: string;
+    status?: keyof typeof StatusCodes;
 }
+
 export const ResponseHandler = (res: Response, params: responseHandlerType) => {
+    const status = (params?.status ? params?.status : params?.resType === 'authError' ? "UNAUTHORIZED" : "OK");
+    console.log({ status })
+    const statusCode = /^\d+$/.test(status) ? Number(status) : StatusCodes?.[status] || 200;
     if (params?.resType === 'error') {
         console.log('this is errror responce')
-        return res.json({
+        return res.status(statusCode).json({
             "success": false,
-            "message": params?.message || 'error',
+            "message": params?.message || StatusCodes[statusCode] || 'error',
         })
     } else if (params?.resType === 'authError') {
         console.log('you are not authorized')
-        return res.json({
+        return res.status(statusCode).json({
             "success": false,
-            "message": params?.message || 'you are not a valid user.',
+            "message": params?.message || StatusCodes[statusCode] || 'you are not a valid user.',
             "isAuth": 'no'
         })
     } else {
-        return res.json({
+        return res.status(statusCode).json({
             "success": true,
-            "message": params?.message || 'success',
+            "message": params?.message || StatusCodes[statusCode] || 'success',
             payload: params?.payload || null
         })
     }

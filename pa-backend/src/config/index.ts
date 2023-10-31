@@ -8,6 +8,7 @@ interface AppConfig {
     smtpPassword: string;
     clientUrl: string;
     jwtAccountActivationKey: string;
+    bcryptSaltRounds: number;
 }
 
 interface DbConfig {
@@ -29,7 +30,8 @@ const appConfig: AppConfig = {
     smtpUsername: process.env.SMTP_EMAIL || '',
     smtpPassword: process.env.SMTP_PASSWORD || '',
     clientUrl: process.env.CLIENT_URL || '',
-    jwtAccountActivationKey: process.env.JWT_ACCOUNT_ACTIVATION_KEY || ''
+    jwtAccountActivationKey: process.env.JWT_ACCOUNT_ACTIVATION_KEY || '',
+    bcryptSaltRounds: Number(process.env.BCRYPT_SALT_ROUNDS!)
 };
 
 const dbConfig: DbConfig = {

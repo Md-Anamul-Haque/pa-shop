@@ -1,30 +1,32 @@
 import db from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
-import { Request, Response } from 'express';
+import { Request, Response } from '@/types/request&responce.type';
+import { orgType } from '@/types/tables.type';
 export const handleOrgPOST = async (req: Request, res: Response) => {
     try {
         // ... handle POST logic start hear
 
+        const { org_code, org_name, is_active }: orgType = req.body
+        const createOrg = await db.query('insert into ORG (org_code, org_name, is_active) VALUES($1,$2,$3) RETURNING *', [org_code, org_name, is_active])
+        const newOrg: orgType = createOrg.rows[0];
 
-
-        const DbQueryResult = db.query('select 1+2')
-        // ... handle POST logic end hear
-        if ('condition') {
-            ResponseHandler(res, {
-                resType: 'success',
-                message: '',
-                payload: '' // your can any data for responce
-            })
+        if (newOrg) {
+            return ResponseHandler(res, {
+                status: 'CREATED',
+                payload: newOrg // your can any data for responce
+            });
         } else {
-            ResponseHandler(res, {
+            return ResponseHandler(res, {
                 resType: 'error',
-                message: 'error message  //your can any message'
+                status: 'NOT_IMPLEMENTED',
+                message: 'error message'  //your can any message'
             });
         }
     } catch (error) {
-        ResponseHandler(res, {
+        return ResponseHandler(res, {
             resType: 'error',
+            status: 'INTERNAL_SERVER_ERROR',
             message: (error as any)?.message || ''  //your can any message 
-        })
+        });
     }
 }

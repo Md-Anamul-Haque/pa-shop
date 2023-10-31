@@ -1,24 +1,26 @@
 import db from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
-export const handleOrgGET = async (req: Request, res: Response) => {
+export const handleCustomerGETOne = async (req: Request, res: Response) => {
     try {
-        // ... handle GET logic start hear
-        const orgs = await db.query('select * from org ')
+        // ... handle DELETE logic start hear
+        const org_code = req.auth?.user?.org_code;
+        const cust_id = req?.params?.slug;
+        if (!org_code || !cust_id) {
+            throw new Error('cust_id is required')
+        }
+        const { rows } = await db.query('SELECT * FROM customer WHERE org_code = $1 AND cust_id = $2', [org_code, cust_id]);
 
-
-
-        if (orgs?.rows) {
+        if (rows[0]?.length) {
             return ResponseHandler(res, {
                 resType: 'success',
                 status: 'OK',
-                message: '',
-                payload: orgs.rows
+                payload: rows[0]
             });
         } else {
             return ResponseHandler(res, {
                 resType: 'error',
-                status: 'NO_CONTENT',
+                status: 'NOT_FOUND',
             });
         }
     } catch (error) {
@@ -26,6 +28,6 @@ export const handleOrgGET = async (req: Request, res: Response) => {
             resType: 'error',
             status: 'INTERNAL_SERVER_ERROR',
             message: (error as any)?.message || ''  //your can any message 
-        })
+        });
     }
 }

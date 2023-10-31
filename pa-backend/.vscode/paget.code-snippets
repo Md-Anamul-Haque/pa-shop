@@ -25,27 +25,30 @@
 
       "export const handle${TM_DIRECTORY/.*[\\\\/]([a-zA-Z]+).*/${1:/capitalize}/}${1|GET,POST,PUT,PATCH,DELETE,HEAD|} = async (req: Request, res: Response) => {",
       "    try {",
-      "        // ... handle ${1} logic start hear\n\n\n",
+      "        // ... handle ${1} logic start hear",
       "        const DbQueryResult =await db.query('select 1+2')",
-      "        // ... handle ${1} logic end hear",
+      "\n\n\n",
 
       "        if ('condition') {",
       "            return ResponseHandler(res, {",
       "                resType: 'success',",
+      "                status: 'OK',"
       "                message: '',",
       "                payload: '' // your can any data for responce",
-      "            })",
+      "            });",
       "        } else {",
       "            return ResponseHandler(res, {",
       "                resType: 'error',",
-      "                message: 'error message  //your can any message'",
+      "                status: 'NOT_IMPLEMENTED',"
+      "                message: 'error message'  //your can any message'",
       "            });",
       "        }",
       "    } catch (error) {",
       "        return ResponseHandler(res, {",
       "            resType: 'error',",
+      "            status: 'INTERNAL_SERVER_ERROR',"
       "            message: (error as any)?.message || ''  //your can any message ",
-      "        })",
+      "        });",
       "    }",
       "}"
     ]
