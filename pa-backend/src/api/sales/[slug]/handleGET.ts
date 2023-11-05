@@ -1,21 +1,21 @@
-import { pool } from '@/config/db';
+import { sql } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
-export const handleCustomerGETOne = async (req: Request, res: Response) => {
+export const handlePurchaseGET = async (req: Request, res: Response) => {
     try {
-        // ... handle DELETE logic start hear
-        const org_code = req.auth?.user?.org_code;
-        const cust_id = req?.params?.slug;
-        if (!org_code || !cust_id) {
-            throw new Error('cust_id is required')
-        }
-        const { rows } = await pool.query('SELECT * FROM customer WHERE org_code = $1 AND cust_id = $2', [org_code, cust_id]);
+        // ... handle GET logic start hear
+        const sales_id = req.params.slug;
+        const org_code = req.auth?.user?.org_code as string;
+        console.log({ org_code })
 
-        if (rows[0]?.length) {
+        const mtData = await sql`SELECT * FROM sales_mt WHERE sales_id = ${sales_id} AND org_code = ${org_code}`
+        const dtsData = await sql`SELECT * FROM sales_dt WHERE sales_id = ${sales_id} AND org_code = ${org_code}`
+
+        if (mtData) {
             return ResponseHandler(res, {
                 resType: 'success',
                 status: 'OK',
-                payload: rows[0]
+                payload: { mt: mtData?.[0], dts: dtsData } // your can any data for responce
             });
         } else {
             return ResponseHandler(res, {

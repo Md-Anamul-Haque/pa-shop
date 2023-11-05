@@ -1,4 +1,4 @@
-import db from '@/config/db';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 import { customerType } from '@/types/tables.type';
@@ -23,7 +23,7 @@ export const handleCustomerPUT = async (req: Request, res: Response) => {
             throw new Error(validationError.details[0].message)
         }
         // start Check if the customer name already exists
-        const checkResult = await db.query('SELECT * FROM customer WHERE org_code = $1 AND cust_name = $2 AND address = $3', [
+        const checkResult = await pool.query('SELECT * FROM customer WHERE org_code = $1 AND cust_name = $2 AND address = $3', [
             org_code,
             cust_name,
             address
@@ -38,7 +38,7 @@ export const handleCustomerPUT = async (req: Request, res: Response) => {
         }
         // end of Check if the customer name already exists
         const query = 'UPDATE customer SET cust_name = $1, address = $2, phone=$3, email=$4, updated_at = NOW() WHERE org_code = $5 AND supp_id = $6 RETURNING *';
-        const { rows } = await db.query(query, [cust_name, address, phone, email, org_code, supp_id])
+        const { rows } = await pool.query(query, [cust_name, address, phone, email, org_code, supp_id])
 
         if (rows[0]) {
             return ResponseHandler(res, {

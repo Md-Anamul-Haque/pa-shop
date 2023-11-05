@@ -1,4 +1,4 @@
-import db from '@/config/db';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 import { userType } from '@/types/tables.type';
@@ -27,7 +27,7 @@ export const handleUserPOST = async (req: Request, res: Response) => {
         bcrypt.hash(password, saltRounds, async function (err, hash) {
             // Store hash in your password DB.
             if (err) throw new Error(err.message);
-            const { rows } = await db.query(`INSERT INTO USERS 
+            const { rows } = await pool.query(`INSERT INTO USERS 
             (org_code, user_id, username, email, password, role, is_active)
              VALUES(
                 $1,

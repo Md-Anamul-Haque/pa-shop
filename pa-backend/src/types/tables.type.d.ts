@@ -31,10 +31,9 @@ export type productType = {
 
 export type purchaseMasterType = {
     org_code: string;
-    pur_id: number;
-    pur_date: Date;
+    pur_id: string;
+    pur_date?: Date;
     supp_id: string;
-    total_amt: number;
     discount?: number;
     vat?: number;
     paid_amt: number;
@@ -42,9 +41,9 @@ export type purchaseMasterType = {
 
 export type purchaseDetailType = {
     org_code: string;
-    pur_id: number;
+    pur_id: string;
     pur_dt_id?: number;
-    pur_date: Date;
+    // pur_date: Date;
     prod_id: string;
     uom: string;
     qty: number;
@@ -56,7 +55,6 @@ export type salesMasterType = {
     sales_id: string;
     sales_date: Date;
     cust_id: string;
-    total_amt: number;
     discount?: number;
     vat?: number;
     paid_amt: number;
@@ -64,8 +62,9 @@ export type salesMasterType = {
 
 export type salesDetailType = {
     org_code: string;
+    sales_dt_id?: number;
     sales_id: string;
-    sales_date: Date;
+    // sales_date: Date;
     prod_id: string;
     uom: string;
     qty: number;

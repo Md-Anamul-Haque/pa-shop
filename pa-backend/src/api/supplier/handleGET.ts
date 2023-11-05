@@ -1,4 +1,4 @@
-import db from '@/config/db';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 export const handleSupplierGET = async (req: Request, res: Response) => {
@@ -8,7 +8,7 @@ export const handleSupplierGET = async (req: Request, res: Response) => {
         const offset = (Number(page) - 1) * Number(pageSize);
         const limit = Number(pageSize);
         const org_code = req.auth?.user?.org_code;
-        const { rows } = await db.query('select * from supplier where org_code= $1  ORDER BY updated_at LIMIT $2 OFFSET $3;', [org_code, limit, offset]);
+        const { rows } = await pool.query('select * from supplier where org_code= $1  ORDER BY updated_at LIMIT $2 OFFSET $3;', [org_code, limit, offset]);
 
         if (rows) {
             return ResponseHandler(res, {

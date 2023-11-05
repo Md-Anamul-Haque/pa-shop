@@ -1,4 +1,4 @@
-import db from '@/config/db';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 export const handleProductGET = async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ export const handleProductGET = async (req: Request, res: Response) => {
     ORDER BY updated_at
     LIMIT $2 OFFSET $3;
   `;
-        const { rows: products } = await db.query(query, [org_code, limit, offset]);
+        const { rows: products } = await pool.query(query, [org_code, limit, offset]);
         if (products) {
             return ResponseHandler(res, {
                 resType: 'success',

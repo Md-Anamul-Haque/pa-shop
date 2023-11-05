@@ -1,4 +1,4 @@
-import db from '@/config/db';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 import { supplierType } from '@/types/tables.type';
@@ -21,7 +21,7 @@ export const handleSupplierPOST = async (req: Request, res: Response) => {
             throw new Error(validationError.details[0].message)
         }
         // start Check if the supplier name already exists
-        const checkResult = await db.query('SELECT * FROM supplier WHERE org_code = $1 AND supp_name = $2 AND address = $3', [
+        const checkResult = await pool.query('SELECT * FROM supplier WHERE org_code = $1 AND supp_name = $2 AND address = $3', [
             org_code,
             supp_name,
             address
@@ -61,7 +61,7 @@ export const handleSupplierPOST = async (req: Request, res: Response) => {
                    )
           RETURNING *;
         `;
-        const { rows } = await db.query(query, [org_code, supp_name, address, phone, email]);
+        const { rows } = await pool.query(query, [org_code, supp_name, address, phone, email]);
 
 
         if (rows[0]) {

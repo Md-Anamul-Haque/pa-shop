@@ -43,6 +43,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "pg-format": "^1.0.4",
+    "postgres": "^3.4.2",
     "sequelize": "^6.33.0",
     "uuid": "^9.0.1"
   }

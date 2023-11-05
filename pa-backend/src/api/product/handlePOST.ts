@@ -1,4 +1,4 @@
-import db from '@/config/db';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 import { productType } from '@/types/tables.type';
@@ -26,7 +26,7 @@ export const handleProductPOST = async (req: Request, res: Response) => {
             throw new Error(validationError.details[0].message)
         }
         // start Check if the product name already exists
-        const checkResult = await db.query('SELECT * FROM product WHERE org_code = $1 AND prod_name = $2', [
+        const checkResult = await pool.query('SELECT * FROM product WHERE org_code = $1 AND prod_name = $2', [
             org_code,
             prod_name,
         ]);
@@ -68,7 +68,7 @@ export const handleProductPOST = async (req: Request, res: Response) => {
                )
       RETURNING *;
     `;
-        const { rows } = await db.query(query, [org_code, prod_name, prod_type, price, uom, brand, category, bar_qr_code]);
+        const { rows } = await pool.query(query, [org_code, prod_name, prod_type, price, uom, brand, category, bar_qr_code]);
 
         const newProduct = rows[0];
 

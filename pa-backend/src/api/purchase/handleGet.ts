@@ -1,5 +1,5 @@
 // handlePurchaseGET
-import db from '@/config/db';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 export const handlePurchaseGET = async (req: Request, res: Response) => {
@@ -11,12 +11,12 @@ export const handlePurchaseGET = async (req: Request, res: Response) => {
         const org_code = req.auth?.user?.org_code
         // Query to fetch purchases with pagination
         const query = `
-    SELECT pur_id,supp_id,pur_date,total_amt FROM purchase_mt
+    SELECT pur_id,supp_id,pur_date FROM purchase_mt
     WHERE org_code = $1
     ORDER BY updated_at
     LIMIT $2 OFFSET $3;
   `;
-        const { rows: purchases } = await db.query(query, [org_code, limit, offset]);
+        const { rows: purchases } = await pool.query(query, [org_code, limit, offset]);
         if (purchases) {
             return ResponseHandler(res, {
                 resType: 'success',

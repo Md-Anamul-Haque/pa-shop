@@ -1,4 +1,4 @@
-import db from '@/config/db';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 import { orgType } from '@/types/tables.type';
@@ -7,7 +7,7 @@ export const handleOrgPOST = async (req: Request, res: Response) => {
         // ... handle POST logic start hear
 
         const { org_code, org_name, is_active }: orgType = req.body
-        const createOrg = await db.query('insert into ORG (org_code, org_name, is_active) VALUES($1,$2,$3) RETURNING *', [org_code, org_name, is_active])
+        const createOrg = await pool.query('insert into ORG (org_code, org_name, is_active) VALUES($1,$2,$3) RETURNING *', [org_code, org_name, is_active])
         const newOrg: orgType = createOrg.rows[0];
 
         if (newOrg) {

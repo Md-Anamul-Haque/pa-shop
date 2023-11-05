@@ -19,14 +19,14 @@
     "scope": "javascript,typescript",
     "prefix": "pa-rs", // pa-application route handle snippets
     "body": [
-      "import db from '@/config/db';",
+      "import { sql } from '@/config/db';",
       "import { ResponseHandler } from '@/helpers/ResponseHandler';",
       "import { Request, Response } from '@/types/request&responce.type';",
 
       "export const handle${TM_DIRECTORY/.*[\\\\/]([a-zA-Z]+).*/${1:/capitalize}/}${1|GET,POST,PUT,PATCH,DELETE,HEAD|} = async (req: Request, res: Response) => {",
       "    try {",
       "        // ... handle ${1} logic start hear",
-      "        const DbQueryResult =await db.query('select 1+2')",
+      "        const DbQueryResult =await sql`select 1+2`;",
       "\n\n\n",
 
       "        if ('condition') {",

@@ -1,80 +1,116 @@
-import { client } from '@/config/db';
+import { pool, sql } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 import { purchaseDetailType, purchaseMasterType } from '@/types/tables.type';
+import Joi from 'joi';
 
 type reqBodyDataType = {
     mt: purchaseMasterType;
     dts: purchaseDetailType[];
 }
+const newRowSchema = Joi.object({
+    org_code: Joi.string(),
+    pur_id: Joi.string().required(),
+    prod_id: Joi.string().required(),
+    uom: Joi.string().required(),
+    qty: Joi.number().required(),
+    unit_price: Joi.number().required(),
+});
 
+const schema = {
+    newMtData: Joi.object({
+        org_code: Joi.string().required(),
+        pur_id: Joi.string().required(),
+        pur_date: Joi.alternatives().try(Joi.date(), Joi.string()).required(),
+        supp_id: Joi.string().required(),
+        discount: Joi.number(),
+        vat: Joi.number(),
+        paid_amt: Joi.number(),
+    }),
+    newPurchaseDtValues: Joi.array().items(newRowSchema)
+};
 
 export const handlePurchasePOST = async (req: Request, res: Response) => {
-    await client.connect();
-    await client.query('BEGIN');
     try {
-        const org_code = req.auth?.user?.org_code;
+        const org_code = req.auth?.user?.org_code as string;
 
         const { mt, dts }: reqBodyDataType = req.body;
-        const pur_date = mt.pur_date;
-        const { rows: purchaseMtResult } = await client.query(
-            `INSERT INTO purchase_mt (
-                org_code, 
-                pur_date,
-                supp_id, 
-                total_amt, 
-                discount, 
-                vat, 
-                paid_amt
-                ) VALUES ($1,$2, $3, $4, $5, $6, $7) RETURNING *`,
-            [
-                org_code,
-                pur_date,
-                mt.supp_id,
-                mt.total_amt,
-                Number(mt.discount),
-                Number(mt.vat),
-                Number(mt.paid_amt),
-            ]
-        );
-        console.log('first')
-        console.log({ purchaseMtResult })
-        // Insert into purchase_dt
-        const purchaseDtValues = dts.map((dt: purchaseDetailType) => (
-            {
-                org_code,
-                pur_id: purchaseMtResult[0].pur_id,
-                pur_date: purchaseMtResult[0].pur_date,
-                prod_id: dt.prod_id,
-                uom: Number(dt.uom),
-                qty: Number(dt.qty),
-                unit_price: Number(dt.unit_price),
-            }
-        ));
-        console.log(purchaseDtValues)
-        for (const purchaseDtValue of purchaseDtValues) {
-            await client.query(
-                `INSERT INTO purchase_dt(org_code, pur_id, pur_date, prod_id, uom, qty, unit_price) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-                [purchaseDtValue.org_code, purchaseDtValue.pur_id, purchaseDtValue.pur_date, purchaseDtValue.prod_id, purchaseDtValue.uom, purchaseDtValue.qty, purchaseDtValue.unit_price],
-            );
+        // const [pur_date] = await sql`select TO_DATE(${mt?.pur_date || sql`now()`}, 'YYYY-MM-DD') as pur_date`;
+        // console.log({ pur_date })
+        const subQuery_forPur_id = String(`(
+            SELECT 
+              CASE 
+                WHEN COUNT(*) = 0 OR MAX(CASE WHEN org_code = '${org_code}' THEN 1 ELSE 0 END) = 0 
+                THEN 'pur_1'
+                ELSE 'pur_' || (COALESCE(
+                  MAX(CAST(SPLIT_PART(pur_id, '_', 2) AS INTEGER)), 0) + 1)::TEXT
+              END
+            FROM 
+            purchase_mt 
+          )
+          `);
+        const { rows: [{ pur_id }] } = await pool.query(`(
+            SELECT 
+              CASE 
+                WHEN COUNT(*) = 0 OR MAX(CASE WHEN org_code = '${org_code}' THEN 1 ELSE 0 END) = 0 
+                THEN 'pur_1'
+                ELSE 'pur_' || (COALESCE(
+                  MAX(CAST(SPLIT_PART(pur_id, '_', 2) AS INTEGER)), 0) + 1)::TEXT
+              END
+              as pur_id
+            FROM 
+            purchase_mt 
+          )`);
+        const newMtData = {
+            org_code,
+            pur_id,
+            pur_date: mt?.pur_date || new Date(),
+            supp_id: mt.supp_id,
+            discount: Number(mt.discount),
+            vat: Number(mt.vat),
+            paid_amt: Number(mt.paid_amt)
+        };
+        console.log('pass mt')
+        const { error: validationError_mt } = schema.newMtData.validate(newMtData);
+        if (validationError_mt) {
+            throw new Error('newMtData:' + validationError_mt.details[0].message)
         }
-        console.log('inserted dt successfully')        // await client.query('INSERT INTO purchase_dt(org_code, pur_id, pur_date, prod_id, uom, qty, unit_price, created_at, updated_at) VALUES %1', ["('org_1', '20', '2023-11-01', 'PROD_1', 'pcs', '5', '200'), ('org_1', '20', '2023-11-01', 'PROD_2', 'pcs', '10', '80')"]);
 
-
-
-        // Commit the transaction
-        await client.query('COMMIT');
-        await client.end();
-        return ResponseHandler(res, {
-            resType: 'success',
-            status: 'OK',
-            message: '',
-            // payload:''// your can any data for responce
+        console.log({ newMtData })
+        const [purchaseMtResult, purchaseDtResult] = await sql.begin(async sql => {
+            const [purchaseMtResult] = await sql`insert into purchase_mt ${sql(newMtData, 'pur_id', 'org_code', 'pur_date', 'supp_id', 'discount', 'vat', 'paid_amt')} returning *`;
+            const newPurchaseDtValues = dts.map((dt: purchaseDetailType) => (
+                {
+                    org_code,
+                    pur_id: purchaseMtResult.pur_id,
+                    prod_id: dt.prod_id,
+                    uom: dt.uom,
+                    qty: Number(dt.qty),
+                    unit_price: Number(dt.unit_price),
+                }
+            ));
+            const { error: validationError_dt } = schema.newPurchaseDtValues.validate(newPurchaseDtValues);
+            if (validationError_dt) {
+                throw new Error('newdt:' + validationError_dt.details[0].message)
+            }
+            const purchaseDtResult = await sql`INSERT INTO purchase_dt${sql(newPurchaseDtValues, 'org_code', 'pur_id', 'prod_id', 'uom', 'qty', 'unit_price')} returning *`;
+            return [purchaseMtResult, purchaseDtResult]
         });
-
+        if (purchaseMtResult) {
+            return ResponseHandler(res, {
+                resType: 'success',
+                status: 'OK',
+                message: '',
+                payload: { purchaseMtResult, purchaseDtResult }// your can any data for responce
+            });
+        } else {
+            return ResponseHandler(res, {
+                resType: 'error',
+                status: 'NOT_IMPLEMENTED',
+                message: 'error message'  //your can any message'
+            });
+        }
     } catch (error) {
-        await client.query('ROLLBACK');
-        await client.end();
         console.log('ROLLBACK')
         return ResponseHandler(res, {
             resType: 'error',

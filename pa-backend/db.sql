@@ -40,15 +40,15 @@ CREATE TABLE product (
 -- Purchase Master Table
 CREATE TABLE purchase_mt (
     org_code VARCHAR(50),
-    pur_id SERIAL PRIMARY KEY,
+    pur_id VARCHAR(50),
     pur_date DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     supp_id VARCHAR(50),
-    total_amt DECIMAL(10, 2) NOT NULL,
     discount DECIMAL(5, 2),
     vat DECIMAL(5, 2),
     paid_amt DECIMAL(10, 2),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(org_code,pur_id), -- Composite primary key
     FOREIGN KEY (org_code) REFERENCES org(org_code)
 );
 
@@ -56,8 +56,8 @@ CREATE TABLE purchase_mt (
 CREATE TABLE purchase_dt (
     org_code VARCHAR(50),
     pur_dt_id BIGSERIAL PRIMARY KEY,
-    pur_id INTEGER,
-    pur_date DATE,
+    pur_id VARCHAR(50),
+    -- pur_date DATE,
     prod_id VARCHAR(50),
     uom VARCHAR(50) NOT NULL,
     qty INT,
@@ -65,70 +65,41 @@ CREATE TABLE purchase_dt (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (org_code) REFERENCES org(org_code),
-    FOREIGN KEY (pur_id) REFERENCES purchase_mt(pur_id),
+    FOREIGN KEY (pur_id,org_code) REFERENCES purchase_mt(pur_id,org_code),
     FOREIGN KEY (prod_id,org_code) REFERENCES product(prod_id,org_code)
 );
--- CREATE OR REPLACE FUNCTION insert_purchase_dt(
---     p_org_codes VARCHAR[],
---     p_pur_ids INTEGER[],
---     p_pur_dates DATE[],
---     p_prod_ids VARCHAR[],
---     p_uoms VARCHAR[],
---     p_qtys INT[],
---     p_unit_prices DECIMAL[]
--- ) RETURNS VOID AS $$
--- DECLARE
---     i INT;
--- BEGIN
---     -- Start a transaction
---     BEGIN
---         -- Loop through the arrays and insert records
---         FOR i IN 1..array_length(p_org_codes, 1) LOOP
---             -- Insert into purchase_dt
---             INSERT INTO purchase_dt(org_code, pur_id, pur_date, prod_id, uom, qty, unit_price, created_at, updated_at)
---             VALUES (p_org_codes[i], p_pur_ids[i], p_pur_dates[i], p_prod_ids[i], p_uoms[i], p_qtys[i], p_unit_prices[i], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
---         END LOOP;
-
---         -- Commit the transaction
---         COMMIT;
---     EXCEPTION
---         -- Rollback the transaction in case of error
---         WHEN OTHERS THEN
---             ROLLBACK;
---             RAISE;
---     END;
--- END;
--- $$ LANGUAGE plpgsql;
 
 
 -- Sales Master Table
 CREATE TABLE sales_mt (
     org_code VARCHAR(50),
-    sales_id VARCHAR(50) PRIMARY KEY,
+    sales_id VARCHAR(50),
     sales_date DATE NOT NULL,
     cust_id VARCHAR(50),
-    total_amt DECIMAL(10, 2) NOT NULL,
     discount DECIMAL(5, 2),
     vat DECIMAL(5, 2),
     paid_amt DECIMAL(10, 2),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+    PRIMARY KEY(org_code,sales_id), -- Composite primary key
     FOREIGN KEY (org_code) REFERENCES org(org_code)
 );
 
 -- Sales Detail Table
 CREATE TABLE sales_dt (
     org_code VARCHAR(50),
+    sales_dt_id BIGSERIAL PRIMARY KEY,
     sales_id VARCHAR(50),
-    sales_date DATE,
+    -- sales_date DATE,
     prod_id VARCHAR(50),
     uom VARCHAR(50) NOT NULL,
     qty INT,
     unit_price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (org_code) REFERENCES org(org_code),
-    FOREIGN KEY (sales_id) REFERENCES sales_mt(sales_id),
-    FOREIGN KEY (prod_id) REFERENCES product(prod_id)
+    FOREIGN KEY (sales_id,org_code) REFERENCES sales_mt(sales_id,org_code),
+    FOREIGN KEY (prod_id,org_code) REFERENCES product(prod_id,org_code)
 );
 
 -- Supplier Table
