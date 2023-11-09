@@ -1,8 +1,8 @@
 
-import { type Request, type Response } from 'express'
+import { auth } from '@/helpers/auth'
+import { handleCustomerGET } from './handleGET'
+import { handleCustomerPOST } from './handlePOST'
 
-const getRequest = async (req: Request, res: Response) => {
-  res.send('hello')
-}
 
-export const GET = getRequest
+export const GET = [auth, handleCustomerGET]
+export const POST = [auth, handleCustomerPOST]

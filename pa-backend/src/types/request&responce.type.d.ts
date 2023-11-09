@@ -3,7 +3,7 @@ import { userType } from "./tables.type";
 
 export type Request = expReq & {
     auth?: {
-        user?: userType,
+        user?: userType & { ip?: string, session_id: string },
         // org?: orgType
     }
 }

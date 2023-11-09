@@ -6,12 +6,9 @@ export const handleCustomerGETOne = async (req: Request, res: Response) => {
         // ... handle DELETE logic start hear
         const org_code = req.auth?.user?.org_code;
         const cust_id = req?.params?.slug;
-        if (!org_code || !cust_id) {
-            throw new Error('cust_id is required')
-        }
         const { rows } = await pool.query('SELECT * FROM customer WHERE org_code = $1 AND cust_id = $2', [org_code, cust_id]);
 
-        if (rows[0]?.length) {
+        if (rows[0]) {
             return ResponseHandler(res, {
                 resType: 'success',
                 status: 'OK',

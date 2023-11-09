@@ -23,20 +23,22 @@ export const handleSupplierPUT = async (req: Request, res: Response) => {
             throw new Error(validationError.details[0].message)
         }
         // start Check if the supplier name already exists
-        const checkResult = await pool.query('SELECT * FROM supplier WHERE org_code = $1 AND supp_name = $2 AND address = $3', [
+        const checkResult = await pool.query('SELECT * FROM supplier WHERE org_code = $1 AND supp_name = $2 AND phone = $3 AND supp_id != $4;', [
             org_code,
             supp_name,
-            address
+            phone,
+            supp_id
         ]);
         if (checkResult.rows.length > 0) {
             // supplier already exists, return appropriate response
             return ResponseHandler(res, {
                 resType: 'error',
                 status: 'BAD_REQUEST',
-                message: 'supplier name already exists'
+                message: 'this supplier (name,phone) already exists :' + checkResult.rows[0]?.supp_id
             });
         }
         // end of Check if the supplier name already exists
+
         const query = 'UPDATE supplier SET supp_name = $1, address = $2, phone=$3, email=$4, updated_at = NOW() WHERE org_code = $5 AND supp_id = $6 RETURNING *';
         const { rows } = await pool.query(query, [supp_name, address, phone, email, org_code, supp_id])
 

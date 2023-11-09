@@ -21,17 +21,17 @@ export const handleCustomerPOST = async (req: Request, res: Response) => {
             throw new Error(validationError.details[0].message)
         }
         // start Check if the customer name already exists
-        const checkResult = await pool.query('SELECT * FROM customer WHERE org_code = $1 AND supp_name = $2 AND address = $3', [
+        const checkResult = await pool.query('SELECT * FROM customer WHERE org_code = $1 AND cust_name = $2 AND phone = $3', [
             org_code,
             cust_name,
-            address
+            phone
         ]);
         if (checkResult.rows.length > 0) {
             // customer already exists, return appropriate response
             return ResponseHandler(res, {
                 resType: 'error',
                 status: 'BAD_REQUEST',
-                message: 'customer name already exists'
+                message: 'this customer (name,phone) already exists :' + checkResult.rows[0]?.cust_id
             });
         }
         // end of Check if the customer name already exists
@@ -41,8 +41,8 @@ export const handleCustomerPOST = async (req: Request, res: Response) => {
             SELECT 
               CASE 
                 WHEN COUNT(*) = 0 OR MAX(CASE WHEN org_code = '${org_code}' THEN 1 ELSE 0 END) = 0 
-                THEN 'cus_1'
-                ELSE 'cus_' || (COALESCE(
+                THEN 'CUS_1'
+                ELSE 'CUS_' || (COALESCE(
                   MAX(CAST(SPLIT_PART(cust_id, '_', 2) AS INTEGER)), 0) + 1)::TEXT
               END
             FROM 

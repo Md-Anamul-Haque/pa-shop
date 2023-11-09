@@ -8,8 +8,8 @@ export const handlePurchaseGET = async (req: Request, res: Response) => {
         const org_code = req.auth?.user?.org_code as string;
         console.log({ org_code })
 
-        const mtData = await sql`SELECT * FROM purchase_mt WHERE pur_id = ${pur_id} AND org_code = ${org_code}`
-        const dtsData = await sql`SELECT * FROM purchase_dt WHERE pur_id = ${pur_id} AND org_code = ${org_code}`
+        const mtData = await sql`SELECT * FROM purchase_return_mt WHERE pur_id = ${pur_id} AND org_code = ${org_code}`
+        const dtsData = await sql`SELECT * FROM purchase_return_dt WHERE pur_id = ${pur_id} AND org_code = ${org_code}`
 
         if (mtData?.[0]) {
             return ResponseHandler(res, {

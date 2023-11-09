@@ -5,7 +5,7 @@ import validationSales_put from '@/validationChecks/validation.sales.put';
 
 export const handlePurchasePUT = async (req: Request, res: Response) => {
     try {
-        const { changeRows, deleteRows, mt: UpdateMtData, newRows } = validationSales_put(req)
+        const { changeRows, deleteRows, mt: UpdateMtData, newRows } = validationSales_put(req);
         // let { changeRows, newRows, deleteRows, mt }: reqBodyDataType = req.body
         const org_code = req.auth?.user?.org_code as string;
         const sales_id = req.params.slug;
@@ -21,7 +21,9 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
             where sales_id = ${sales_id} and org_code= ${org_code}
             RETURNING *;
             `;
-
+            if (!updateMt?.length) {
+                throw new Error('updateMtData:' + 'not found')
+            };
             let updateResult = changeRows && await sql`
                 UPDATE sales_dt 
                 SET 
@@ -41,14 +43,15 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
 
             const newDtResult = newRows && await sql`INSERT INTO sales_dt${sql(newRows, 'org_code', 'sales_id', 'prod_id', 'uom', 'qty', 'unit_price')} returning *`;
             const deleteExisting = deleteRows && await sql`DELETE FROM sales_dt WHERE sales_dt_id IN(${deleteRows}) and org_code = ${org_code} returning *`;
-            return { updateResult, updateMt, newDtResult, deleteExisting }
+            return { updateResult, updateMt, newDtResult, deleteExisting };
         });
 
-        if (Object.keys(fainalData)) {
+        if (fainalData.deleteExisting?.length || fainalData.newDtResult?.length || fainalData.updateMt?.length || fainalData.updateResult?.length) {
             const returnValue = {
                 mt: fainalData?.updateMt?.[0],
-                dts: [...fainalData?.updateResult || '', ...fainalData?.newDtResult || '']
-            }
+                dts: [...fainalData?.updateResult || '', ...fainalData?.newDtResult || ''],
+                deleted: fainalData?.deleteExisting || []
+            };
             return ResponseHandler(res, {
                 resType: 'success',
                 status: 'OK',
@@ -60,7 +63,7 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
                 status: 'NOT_IMPLEMENTED',
                 message: 'error message'  //your can any message'
             });
-        }
+        };
     } catch (error) {
         console.log(error)
         return ResponseHandler(res, {
@@ -68,5 +71,5 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
             status: 'INTERNAL_SERVER_ERROR',
             message: (error as any)?.message || ''  //your can any message 
         });
-    }
-}
+    };
+};

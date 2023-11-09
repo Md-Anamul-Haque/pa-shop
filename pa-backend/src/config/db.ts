@@ -8,14 +8,14 @@ export const pool = new Pool({
     port,
     database,
     password
-})
+});
 export const client = new Client({
     host,
     user,
     port,
     database,
     password
-})
+});
 
 export const sql = postgres({
     host,
@@ -23,7 +23,7 @@ export const sql = postgres({
     port,
     database,
     password
-})
+});
 
 
 

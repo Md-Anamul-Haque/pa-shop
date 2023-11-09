@@ -1,17 +1,46 @@
+import config from '@/config';
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 import { NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+
 const handleAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if ('condition') {
+        const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const token = req.cookies?.['token'] || req.headers?.['authorization']; // req.headers?.['authorization'] this is for mobile application or others
+        if (!token) {
+            return ResponseHandler(res, {
+                resType: 'authError',
+                status: 'UNAUTHORIZED'
+            });
+        }
+        // console.log(req.cookies)
+        const decoded: any = jwt.verify(token, config.app.jwtSecretKey);
+        const { user_id, ip: decodedIp } = decoded;
+        if (decodedIp !== clientIP) { return ResponseHandler(res, { resType: 'authError', message: 'ip  not match' }) }
+        console.log({ user_id })
+        const { rows } = await pool.query(
+            `SELECT u.org_code, u.user_id, u.first_name, u.last_name, u.email, u.password, u.role, u.is_active,
+                    us.session_id, us.token, us.tokenClient, us.created_at, us.expires_at
+             FROM USERS u
+             JOIN user_session us ON u.user_id = us.user_id AND u.user_id = $1 AND u.is_active = true
+             WHERE us.token = $2 AND us.user_id = $3`,
+            [user_id, token, user_id]);
+        console.log({ rows })
+        const userAndSession = rows[0];
+        if (user_id && userAndSession?.org_code && userAndSession?.user_id && userAndSession?.email) {
             req.auth = {
                 user: {
-                    username: '',
-                    user_id: '',
-                    email: 'm.anamul.dev@gmail.com',
-                    role: 'su_admin',
-                    is_active: true,
-                    org_code: 'org_1',
+                    first_name: userAndSession?.first_name || '',
+                    last_name: userAndSession?.last_name || '',
+                    user_id: userAndSession.user_id,
+                    email: userAndSession.email,
+                    role: userAndSession.role,
+                    is_active: userAndSession.is_active,
+                    org_code: userAndSession.org_code,
+                    session_id: userAndSession.session_id,
+                    ip: String(Array.isArray(clientIP) ? clientIP.join('_') : clientIP)
                 }
             }
             console.log('yes pass auth')
@@ -19,7 +48,7 @@ const handleAuth = async (req: Request, res: Response, next: NextFunction) => {
         } else {
             return ResponseHandler(res, {
                 resType: 'authError',
-                message: 'error message  //your can any message'
+                status: 'UNAUTHORIZED'
             });
         }
     } catch (error) {

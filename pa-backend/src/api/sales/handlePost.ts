@@ -39,18 +39,17 @@ export const handleSalesPOST = async (req: Request, res: Response) => {
         const { mt, dts }: reqBodyDataType = req.body;
         const sales_date = mt?.sales_date || new Date();
 
-        const { rows: [{ sales_id }] } = await pool.query(`(
+        const { rows: [{ sales_id }] } = await pool.query(`
             SELECT 
               CASE 
                 WHEN COUNT(*) = 0 OR MAX(CASE WHEN org_code = '${org_code}' THEN 1 ELSE 0 END) = 0 
-                THEN 'sale_1'
-                ELSE 'sale_' || (COALESCE(
+                THEN 'SAL_1'
+                ELSE 'SAL_' || (COALESCE(
                   MAX(CAST(SPLIT_PART(sales_id, '_', 2) AS INTEGER)), 0) + 1)::TEXT
               END
               as sales_id
             FROM 
-            sales_mt 
-          )`);
+            sales_mt`);
         console.log({ sales_id })
         const newMtData = {
             org_code,

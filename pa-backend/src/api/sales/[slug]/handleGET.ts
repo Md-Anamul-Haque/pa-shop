@@ -11,11 +11,11 @@ export const handlePurchaseGET = async (req: Request, res: Response) => {
         const mtData = await sql`SELECT * FROM sales_mt WHERE sales_id = ${sales_id} AND org_code = ${org_code}`
         const dtsData = await sql`SELECT * FROM sales_dt WHERE sales_id = ${sales_id} AND org_code = ${org_code}`
 
-        if (mtData) {
+        if (mtData?.[0]) {
             return ResponseHandler(res, {
                 resType: 'success',
                 status: 'OK',
-                payload: { mt: mtData?.[0], dts: dtsData } // your can any data for responce
+                payload: { mt: mtData[0], dts: dtsData } // your can any data for responce
             });
         } else {
             return ResponseHandler(res, {

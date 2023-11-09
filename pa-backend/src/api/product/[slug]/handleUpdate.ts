@@ -23,20 +23,19 @@ export const handleProductPUT = async (req: Request, res: Response) => {
         if (validationError) {
             throw new Error(validationError.details[0].message)
         }
-        // start Check if the product name already exists
-        const checkResult = await pool.query('SELECT * FROM product WHERE org_code = $1 AND prod_name = $2', [
-            org_code,
-            prod_name,
-        ]);
-        if (checkResult.rows.length > 0) {
-            // Product already exists, return appropriate response
-            return ResponseHandler(res, {
-                resType: 'error',
-                status: 'BAD_REQUEST',
-                message: 'Product name already exists'
-            });
-        }
-        // end of Check if the product name already exists
+        // // start Check if the product name already exists
+        // const checkResult = await pool.query('SELECT * FROM product WHERE org_code = $1 AND prod_id = $2', [
+        //     org_code,
+        //     prod_id,
+        // ]);
+        // if (checkResult.rows.length === 0) {
+        //     // Product already exists, return appropriate response
+        //     return ResponseHandler(res, {
+        //         resType: 'error',
+        //         status: 'NOT_FOUND',
+        //         message: 'Product prod_id not exists'
+        //     });
+        // }
 
         const { rows } = await pool.query(
             'UPDATE product SET prod_name = $1, prod_type = $2, price = $3, uom = $4, brand = $5, category = $6, bar_qr_code = $7, updated_at = NOW() WHERE org_code = $8 AND prod_id = $9 RETURNING *',
@@ -56,7 +55,7 @@ export const handleProductPUT = async (req: Request, res: Response) => {
         if (updateProduct) {
             return ResponseHandler(res, {
                 resType: 'success',
-                status: 'OK',
+                status: 'UPGRADE_REQUIRED',
                 message: 'Product updated successfully',
                 payload: updateProduct // your can any data for responce
             });

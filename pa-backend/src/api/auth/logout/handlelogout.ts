@@ -1,26 +1,23 @@
 import { sql } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
-export const handlePurchaseGET = async (req: Request, res: Response) => {
+export const handleLogoutPOST = async (req: Request, res: Response) => {
     try {
-        // ... handle GET logic start hear
-        const pur_id = req.params.slug;
-        const org_code = req.auth?.user?.org_code as string;
-        console.log({ org_code })
-
-        const mtData = await sql`SELECT * FROM purchase_mt WHERE pur_id = ${pur_id} AND org_code = ${org_code}`
-        const dtsData = await sql`SELECT * FROM purchase_dt WHERE pur_id = ${pur_id} AND org_code = ${org_code}`
-
-        if (mtData?.[0]) {
+        // ... handle POST logic start hear
+        const session_id = req.auth?.user?.session_id as string
+        const [logoutUser] = await sql`DELETE FROM user_session WHERE session_id=${session_id} RETURNING *`;
+        console.log({ logoutUser })
+        if (logoutUser?.session_id) {
+            res.clearCookie('token', { path: "/" })
             return ResponseHandler(res, {
                 resType: 'success',
                 status: 'OK',
-                payload: { mt: mtData[0], dts: dtsData } // your can any data for responce
+                payload: logoutUser // your can any data for responce
             });
         } else {
             return ResponseHandler(res, {
                 resType: 'error',
-                status: 'NOT_FOUND',
+                status: 'NOT_IMPLEMENTED',
             });
         }
     } catch (error) {

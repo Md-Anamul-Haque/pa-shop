@@ -1,26 +1,32 @@
-import { sql } from '@/config/db';
+// handlePurchaseGET
+import { pool } from '@/config/db';
 import { ResponseHandler } from '@/helpers/ResponseHandler';
 import { Request, Response } from '@/types/request&responce.type';
 export const handlePurchaseGET = async (req: Request, res: Response) => {
     try {
         // ... handle GET logic start hear
-        const pur_id = req.params.slug;
-        const org_code = req.auth?.user?.org_code as string;
-        console.log({ org_code })
-
-        const mtData = await sql`SELECT * FROM purchase_mt WHERE pur_id = ${pur_id} AND org_code = ${org_code}`
-        const dtsData = await sql`SELECT * FROM purchase_dt WHERE pur_id = ${pur_id} AND org_code = ${org_code}`
-
-        if (mtData?.[0]) {
+        const { page = 1, pageSize = 10 } = req.query;
+        const offset = (Number(page) - 1) * Number(pageSize);
+        const limit = Number(pageSize);
+        const org_code = req.auth?.user?.org_code
+        // Query to fetch purchases with pagination
+        const query = `
+    SELECT pur_id,supp_id,pur_date FROM purchase_return_mt
+    WHERE org_code = $1
+    ORDER BY updated_at
+    LIMIT $2 OFFSET $3;
+  `;
+        const { rows: purchases } = await pool.query(query, [org_code, limit, offset]);
+        if (purchases) {
             return ResponseHandler(res, {
                 resType: 'success',
                 status: 'OK',
-                payload: { mt: mtData[0], dts: dtsData } // your can any data for responce
+                payload: purchases // your can any data for responce
             });
         } else {
             return ResponseHandler(res, {
                 resType: 'error',
-                status: 'NOT_FOUND',
+                status: 'NO_CONTENT',
             });
         }
     } catch (error) {

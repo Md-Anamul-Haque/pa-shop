@@ -31,7 +31,7 @@ export const ResponseHandler = (res: Response, params: responseHandlerType) => {
         console.log('you are not authorized')
         return res.status(statusCode).json({
             "success": false,
-            "message": params?.message || StatusCodes[statusCode] || 'you are not a valid user.',
+            "message": params?.message || StatusCodes[statusCode], // || 'Unauthorized: User not logged in',
             "isAuth": 'no'
         })
     } else {
