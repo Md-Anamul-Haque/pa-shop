@@ -1,12 +1,12 @@
 import { Request } from "@/types/request&responce.type";
-import { purchaseReturnDetailType, purchaseReturnMasterType } from "@/types/tables.type";
+import { salesReturnDetailType, salesReturnMasterType } from "@/types/tables.type";
 
 
 type reqBodyDataType = {
-    newRows?: purchaseReturnDetailType[];
+    newRows?: salesReturnDetailType[];
     deleteRows?: number[];
-    changeRows?: purchaseReturnDetailType[];
-    mt?: purchaseReturnMasterType;
+    changeRows?: salesReturnDetailType[];
+    mt?: salesReturnMasterType;
 }
 
 import Joi from 'joi';
@@ -14,7 +14,7 @@ import Joi from 'joi';
 // const arrayOfArraysSchema = Joi.array().items(Joi.array().items(innerArraySchema));
 const newRowSchema = Joi.object({
     org_code: Joi.string(),
-    pur_id: Joi.string().required(),
+    sales_r_id: Joi.string().required(),
     prod_id: Joi.string().required(),
     uom: Joi.string().required(),
     qty: Joi.number().required(),
@@ -22,7 +22,7 @@ const newRowSchema = Joi.object({
 });
 
 const changeRowSchema = Joi.object({
-    pur_dt_id: Joi.number().required(),
+    sales_dt_id: Joi.number().required(),
     prod_id: Joi.string().required(),
     uom: Joi.string().required(),
     qty: Joi.number().required(),
@@ -30,8 +30,8 @@ const changeRowSchema = Joi.object({
 });
 const schema = {
     mt: Joi.object({
-        pur_r_date: Joi.alternatives().try(Joi.date(), Joi.string()).required(),
-        supp_id: Joi.string().required(),
+        sales_r_date: Joi.alternatives().try(Joi.date(), Joi.string()).required(),
+        cust_id: Joi.string().required(),
         discount: Joi.number(),
         vat: Joi.number(),
         paid_amt: Joi.number(),
@@ -42,15 +42,18 @@ const schema = {
 };
 
 
-const validationPurchaseReturn_put = (req: Request) => {
+const validationSalesReturn_put = (req: Request) => {
     let { changeRows, newRows, deleteRows, mt }: reqBodyDataType = req.body;
     console.log({ changeRows })
     const org_code = req.auth?.user?.org_code as string;
-    const pur_r_id = req.params.slug
-    newRows = newRows?.map(dt => ({ ...dt, pur_r_id, org_code }))
+    const sales_r_id = req.params.slug
+
+    newRows = newRows?.map(dt => ({ ...dt, sales_r_id, org_code }))
+
+
     // ... handle PUT logic start hear
     const updateRowsData = changeRows?.map(dt => [
-        Number(dt.pur_r_dt_id),
+        Number(dt.sales_r_dt_id),
         dt.prod_id,
         dt.uom,
         Number(dt.qty),
@@ -58,19 +61,18 @@ const validationPurchaseReturn_put = (req: Request) => {
     ]);
 
     const UpdateMtData = mt ? {
-        pur_r_date: mt?.pur_r_date,
-        supp_id: mt.supp_id,
+        sales_r_date: mt.sales_r_date,
+        cust_id: mt.cust_id,
         discount: Number(mt.discount),
         vat: Number(mt.vat),
         paid_amt: Number(mt.paid_amt),
-        remark: mt.remark,
         updated_at: new Date()
     } : undefined;
 
-    const newPurchaseDtValues = newRows?.map((dt: purchaseReturnDetailType) => (
+    const newSalesDtValues = newRows?.map((dt: salesReturnDetailType) => (
         {
             org_code,
-            pur_r_id,
+            sales_r_id,
             prod_id: dt.prod_id,
             uom: dt.uom,
             qty: Number(dt.qty),
@@ -106,8 +108,8 @@ const validationPurchaseReturn_put = (req: Request) => {
             throw new Error('changeRows:' + validationError.details[0].message)
         }
     }
-    return ({ newRows: newPurchaseDtValues, changeRows: updateRowsData, mt: UpdateMtData, deleteRows })
+    return { newRows: newSalesDtValues, changeRows: updateRowsData, mt: UpdateMtData, deleteRows }
 
 }
 
-export default validationPurchaseReturn_put
+export default validationSalesReturn_put

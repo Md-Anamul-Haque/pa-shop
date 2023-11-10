@@ -1,14 +1,14 @@
 {
   "name": "pa-backend",
   "version": "1.0.0",
-  "main": "src/app.ts",
+  "main": "src/main.ts",
   "author": "md-anamul-haque",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register' src/app.ts",
+    "dev": "NODE_ENV=development nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register' src/main.ts",
     "build": "tsc && tsc-alias",
-    "start": "node dist/app.js",
-    "startts": "NODE_OPTIONS='-r tsconfig-paths/register' ts-node src/app.ts",
+    "start": "node dist/main.js",
+    "startts": "NODE_OPTIONS='-r tsconfig-paths/register' ts-node src/main.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -48,7 +48,6 @@
     "pg": "^8.11.3",
     "pg-format": "^1.0.4",
     "postgres": "^3.4.2",
-    "rg-express": "^0.2.1",
     "sequelize": "^6.33.0",
     "strftime": "^0.10.2",
     "uuid": "^9.0.1"

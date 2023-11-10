@@ -19,16 +19,16 @@ type responseHandlerType = {
 
 export const ResponseHandler = (res: Response, params: responseHandlerType) => {
     const status = (params?.status ? params?.status : params?.resType === 'authError' ? "UNAUTHORIZED" : "OK");
-    console.log({ status })
+    // console.log({ status })
     const statusCode = /^\d+$/.test(status) ? Number(status) : StatusCodes?.[status] || 200;
     if (params?.resType === 'error') {
-        console.log('this is errror responce')
+        // console.log('this is errror responce')
         return res.status(statusCode).json({
             "success": false,
             "message": params?.message || StatusCodes[statusCode] || 'error',
         })
     } else if (params?.resType === 'authError') {
-        console.log('you are not authorized')
+        // console.log('you are not authorized')
         return res.status(statusCode).json({
             "success": false,
             "message": params?.message || StatusCodes[statusCode], // || 'Unauthorized: User not logged in',

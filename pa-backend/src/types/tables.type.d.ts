@@ -45,7 +45,6 @@ export type purchaseDetailType = {
     org_code: string;
     pur_id: string;
     pur_dt_id?: number;
-    // pur_date: Date;
     prod_id: string;
     uom: string;
     qty: number;
@@ -54,7 +53,7 @@ export type purchaseDetailType = {
 export type purchaseReturnMasterType = {
     org_code: string;
     pur_r_id: string;
-    pur_date?: Date;
+    pur_r_date?: Date;
     supp_id: string;
     discount?: number;
     vat?: number;
@@ -66,7 +65,6 @@ export type purchaseReturnDetailType = {
     org_code: string;
     pur_r_id: string;
     pur_r_dt_id?: number;
-    // pur_date: Date;
     prod_id: string;
     uom: string;
     qty: number;
@@ -87,13 +85,31 @@ export type salesDetailType = {
     org_code: string;
     sales_dt_id?: number;
     sales_id: string;
-    // sales_date: Date;
     prod_id: string;
     uom: string;
     qty: number;
     unit_price: number;
 }
+export type salesReturnMasterType = {
+    org_code: string;
+    sales_r_id: string;
+    sales_r_date: Date;
+    cust_id: string;
+    discount?: number;
+    vat?: number;
+    paid_amt: number;
+    remark: string;
+}
 
+export type salesReturnDetailType = {
+    org_code: string;
+    sales_r_dt_id?: number;
+    sales_r_id: string;
+    prod_id: string;
+    uom: string;
+    qty: number;
+    unit_price: number;
+}
 export type supplierType = {
     org_code?: string;
     supp_id?: string;

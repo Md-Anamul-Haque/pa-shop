@@ -113,7 +113,7 @@ CREATE TABLE purchase_dt (
 CREATE TABLE purchase_return_mt (
     org_code VARCHAR(50),
     pur_r_id VARCHAR(50),
-    pur_date DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    pur_r_date DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     supp_id VARCHAR(50),
     discount DECIMAL(5, 2),
     vat DECIMAL(5, 2),
@@ -131,7 +131,6 @@ CREATE TABLE purchase_return_dt (
     org_code VARCHAR(50),
     pur_r_dt_id BIGSERIAL PRIMARY KEY,
     pur_r_id VARCHAR(50),
-    -- pur_date DATE,
     prod_id VARCHAR(50),
     uom VARCHAR(50) NOT NULL,
     qty INT,
@@ -173,6 +172,38 @@ CREATE TABLE sales_dt (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (org_code) REFERENCES org(org_code),
     FOREIGN KEY (sales_id,org_code) REFERENCES sales_mt(sales_id,org_code),
+    FOREIGN KEY (prod_id,org_code) REFERENCES product(prod_id,org_code)
+);
+
+-- Sales return Master Table
+CREATE TABLE sales_return_mt (
+    org_code VARCHAR(50),
+    sales_r_id VARCHAR(50),
+    sales_r_date DATE NOT NULL,
+    cust_id VARCHAR(50),
+    discount DECIMAL(5, 2),
+    vat DECIMAL(5, 2),
+    paid_amt DECIMAL(10, 2),
+    remark VARCHAR(250),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(org_code,sales_r_id), -- Composite primary key
+    FOREIGN KEY (org_code) REFERENCES org(org_code)
+);
+
+-- Sales return Detail Table
+CREATE TABLE sales_return_dt (
+    org_code VARCHAR(50),
+    sales_r_dt_id BIGSERIAL PRIMARY KEY,
+    sales_r_id VARCHAR(50),
+    prod_id VARCHAR(50),
+    uom VARCHAR(50) NOT NULL,
+    qty INT,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (org_code) REFERENCES org(org_code),
+    FOREIGN KEY (sales_r_id,org_code) REFERENCES sales_return_mt(sales_r_id,org_code),
     FOREIGN KEY (prod_id,org_code) REFERENCES product(prod_id,org_code)
 );
 

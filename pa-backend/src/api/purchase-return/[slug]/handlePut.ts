@@ -14,7 +14,7 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
         const fainalData = await sql.begin(async sql => {
             console.log({ UpdateMtData })
             const updateMt = UpdateMtData && await sql`
-                                                        UPDATE purchase_return_mt set ${sql(UpdateMtData, 'pur_date', 'supp_id', 'discount', 'vat', 'paid_amt', 'remark', 'updated_at')} 
+                                                        UPDATE purchase_return_mt set ${sql(UpdateMtData, 'pur_r_date', 'supp_id', 'discount', 'vat', 'paid_amt', 'remark', 'updated_at')} 
                                                         where pur_r_id = ${pur_r_id} and org_code= ${org_code}
                                                         RETURNING *;
                                                         `;
