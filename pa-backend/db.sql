@@ -222,3 +222,23 @@ CREATE TABLE user_session (
 
 
 
+CREATE TABLE sales_dt_track (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- Primary key column with UUID data type
+    org_code VARCHAR(50),
+    prod_id VARCHAR(50),
+    qty int,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (org_code) REFERENCES org(org_code),
+    FOREIGN KEY (prod_id,org_code) REFERENCES product(prod_id,org_code)
+);
+INSERT INTO sales_dt_track (org_code,prod_id,qty) VALUES ('org_1','PROD_1',10);
+CREATE TABLE pur_dt_track (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- Primary key column with UUID data type
+    org_code VARCHAR(50),
+    prod_id VARCHAR(50),
+    qty int,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (org_code) REFERENCES org(org_code),
+    FOREIGN KEY (prod_id,org_code) REFERENCES product(prod_id,org_code)
+
+);

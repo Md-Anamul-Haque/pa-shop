@@ -21,7 +21,7 @@
     "body": [
       "import { sql } from '@/config/db';",
       "import { ResponseHandler } from '@/helpers/ResponseHandler';",
-      "import { Request, Response } from '@/types/request&responce.type';",
+      "import {type Request,type Response } from '@/types/request&responce.type';",
 
       "export const handle${TM_DIRECTORY/.*[\\\\/]([a-zA-Z]+).*/${1:/capitalize}/}${1|GET,POST,PUT,PATCH,DELETE,HEAD|} = async (req: Request, res: Response) => {",
       "    try {",

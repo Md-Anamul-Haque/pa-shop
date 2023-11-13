@@ -84,7 +84,7 @@ export const handleSalesPOST = async (req: Request, res: Response) => {
             const salesDtResult = await sql`INSERT INTO sales_dt${sql(newSalesDtValues, 'org_code', 'sales_id', 'prod_id', 'uom', 'qty', 'unit_price')} returning *`;
 
             return ([salesMtResult, salesDtResult])
-        })
+        });
 
         if (salesMtResult) {
             return ResponseHandler(res, {

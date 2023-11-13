@@ -9,13 +9,32 @@ export const handleProductGET = async (req: Request, res: Response) => {
         const limit = Number(pageSize);
         const org_code = req.auth?.user?.org_code
         // Query to fetch products with pagination
-        const query = `
-    SELECT * FROM product
-    WHERE org_code = $1
-    ORDER BY updated_at
-    LIMIT $2 OFFSET $3;
-  `;
-        const { rows: products } = await pool.query(query, [org_code, limit, offset]);
+        const bar_qr_code = req.query.bar_qr_code as string || '';
+        console.log({ bar_qr_code });
+        const searchTerm = req.query.search as string || '';
+        console.log({ searchTerm });
+        let products: any;
+        const query = bar_qr_code ?
+            `SELECT * FROM product WHERE bar_qr_code=$1 AND org_code = $2`
+            : `
+        SELECT
+          *
+        FROM product
+        WHERE 
+          (LOWER(prod_id::TEXT || prod_name || prod_type) LIKE $1
+          OR LOWER(brand || category) LIKE $1
+          OR price::TEXT LIKE $1)
+          AND org_code = $2
+        ORDER BY updated_at
+        LIMIT $3 OFFSET $4;
+      `;
+        if (bar_qr_code) {
+            const { rows } = await pool.query(query, [bar_qr_code, org_code]);
+            products = rows;
+        } else {
+            const { rows } = await pool.query(query, [`%${searchTerm.toLowerCase()}%`, org_code, limit, offset]);
+            products = rows;
+        }
         if (products) {
             return ResponseHandler(res, {
                 resType: 'success',
