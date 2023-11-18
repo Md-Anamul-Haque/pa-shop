@@ -1,7 +1,23 @@
+import { ProductCard } from "@/components/component/Product"
 
 const Products = () => {
     return (
-        <div>Products</div>
+        <div>
+
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+        </div>
     )
 }
 

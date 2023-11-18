@@ -1,7 +1,8 @@
 /* Core */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 /* Instruments */
+import ApiClient from '@/lib/ApiClient'
 import {
     counterSlice,
     incrementAsync,
@@ -14,7 +15,21 @@ const Home = () => {
     const dispatch = useDispatch()
     const count = useSelector(selectCount)
     const [incrementAmount, setIncrementAmount] = useState(2)
+    const api = new ApiClient('http://localhost:8000');
 
+    // Example usage
+    async function fetchData() {
+        try {
+            const data = await api.get('/ip');
+            console.log('Data:', data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
     return (
         <div>
             <div className={'styles.row'}>

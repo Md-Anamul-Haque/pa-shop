@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import strftime from 'strftime';
 
+import cors from 'cors';
 import { NextFunction, Request, Response } from 'express';
 import rg from 'rg-express';
 import { ResponseHandler } from './helpers/ResponseHandler';
@@ -10,16 +11,18 @@ const app = express();
 app.locals.title = 'pa-shop';
 app.locals.strftime = strftime;
 app.locals.email = 'm.anamul.personal@gmail.com';
-
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
+
+// app.use(cors({ credentials: true, origin: '*' }));
 app.use(express.static('public'));
 
 app.get('/ip', (req, res) => {
-        res.send({
-                ip: req.ip,
-                routes: app._router[0]
+        ResponseHandler(res, {
+                payload: req.ip,
         });
         console.log(req.ip)
 });
