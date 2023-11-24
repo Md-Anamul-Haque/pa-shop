@@ -9,9 +9,9 @@ const schema = Joi.object({
     prod_type: Joi.string().required(),
     uom: Joi.string().required(),
     price: Joi.number().required(),
-    brand: Joi.string(),
-    category: Joi.string(),
-    bar_qr_code: Joi.string()
+    brand: Joi.string().allow('').optional(),
+    category: Joi.string().allow('').optional(),
+    bar_qr_code: Joi.string().allow('').optional(),
 });
 export const handleProductPOST = async (req: Request, res: Response) => {
     try {

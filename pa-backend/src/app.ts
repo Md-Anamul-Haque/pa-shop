@@ -14,10 +14,9 @@ app.locals.email = 'm.anamul.personal@gmail.com';
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(cors());
 app.use(cors({ origin: true, credentials: true }));
-
-// app.use(cors({ credentials: true, origin: '*' }));
 app.use(express.static('public'));
 
 app.get('/ip', (req, res) => {

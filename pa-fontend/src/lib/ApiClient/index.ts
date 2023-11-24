@@ -1,44 +1,57 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { apiResponceType } from '@/types/apiResponceType';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ToastOptions, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { buildApiUrl } from '../utils';
 type toastMessagesType = {
-
   loading?: string;
   success?: string;
   error?: string;
-
 }
-type getProps = { config?: AxiosRequestConfig, toastMessages?: toastMessagesType, withToast: boolean };
-type postProps = { data?: any; config?: AxiosRequestConfig, toastMessages?: toastMessagesType, withToast: boolean };
-class ApiClient {
-  private client;
-  private toastOptions: ToastOptions;
-  constructor(baseURL: string, toastOptions?: ToastOptions) {
-    this.toastOptions = toastOptions || {};
-    this.client = axios.create({
-      baseURL,
-    });
 
+type getProps = { config?: AxiosRequestConfig, toastMessages?: toastMessagesType, withToast?: boolean, params?: Record<string, string> };
+type postProps = { data?: any; config?: AxiosRequestConfig, toastMessages?: toastMessagesType, withToast: boolean, params?: Record<string, string> };
+class ApiClient {
+  // private client;
+  private toastOptions: ToastOptions;
+  private baseURL: string;
+  private withCredentials: boolean;
+  constructor(props?: ({ baseURL: string; toastOptions?: ToastOptions } | string)) {
+    this.toastOptions = typeof props === 'string' ? { position: 'top-right', autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: 'light' } : props?.toastOptions || {};
+    this.baseURL = (typeof props === 'string' ? props : props?.baseURL) || '/api';
+    this.withCredentials = true;
+    // this.client = axios.create({
+    //   baseURL: (typeof props === 'string' ? props : props?.baseURL) || '/api',
+    //   withCredentials: true,
+    // });
   }
 
   private async request<T>(method: string, endpoint: string, {
-    data, config, toastMessages, withToast
+    data, config, toastMessages, withToast, params
   }: {
-    data?: any, config?: AxiosRequestConfig, toastMessages?: toastMessagesType, withToast: boolean
+    data?: any, config?: AxiosRequestConfig, toastMessages?: toastMessagesType, withToast: boolean; params?: Record<string, string>
   }): Promise<T> {
     const handleRequest = async () => {
       try {
-        const response: AxiosResponse<T> = await this.client.request<T>({
+        const response: AxiosResponse<T> = await axios({
           method,
-          url: endpoint,
+          url: buildApiUrl(this.baseURL, endpoint, params),
           data,
-          ...config,
+          withCredentials: this.withCredentials,
+          ...config
         });
-        return response.data;
+        // this.client.request<T>({
+        //   method,
+        //   url: endpoint,
+        //   data,
+        //   ...config,
+        // });
+        const resData = response.data as any;
+        return resData;
       } catch (error) {
-
-        throw this.handleError(error as AxiosError);
+        const resErr = this.handleError(error as AxiosError);
+        throw resErr;
       }
     }
     const resolveHandler = handleRequest();
@@ -46,69 +59,22 @@ class ApiClient {
     return resolveHandler
   }
 
-  get<T = any>(endpoint: string, getProp?: getProps) {
-    const { config, toastMessages, withToast = false } = getProp || {};
-    return this.request<T>('get', endpoint, { config, toastMessages, withToast });
-    // const [data, setData] = useState<apiResponceType<T>>();
-    // const [error, setError] = useState<string | null>(null);
-    // const [isLoading, setIsLoading] = useState(true);
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     setIsLoading(true);
-    //     try {
-    //       const response: any = await this.request<T>('get', endpoint, { config, toastMessages, withToast });
-    //       if (!response) {
-    //         throw new Error(`HTTP error! Status: ${response}`);
-    //       }
-    //       setData(response as apiResponceType<T>);
-    //     } catch (error: any) {
-    //       alert(JSON.stringify({ error }))
-
-    //       setError(String(error?.message));
-    //     } finally {
-    //       setIsLoading(false);
-    //     }
-    //   };
-    //   fetchData();
-    // }, [endpoint]);
-    // return { data, error, isLoading };
+  get<T = any>(endpoint: string = '', getProp?: getProps) {
+    const { config, toastMessages, withToast = false, params } = getProp || {};
+    return this.request<apiResponceType<T>>('get', endpoint, { config, toastMessages, withToast, params });
   }
 
   post<T = any>(endpoint: string, postProp: postProps) {
-    const { data, config, toastMessages, withToast = true } = postProp || {};
-    return this.request<T>('post', endpoint, { data, config, toastMessages, withToast });
-    // const [resData, setResData] = useState<apiResponceType<T>>();
-    // const [error, setError] = useState<string | null>(null);
-    // const [isLoading, setIsLoading] = useState(true);
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     setIsLoading(true);
-    //     try {
-    //       const response: any = await this.request<T>('post', endpoint, { data, config, toastMessages, withToast });
-    //       if (!response) {
-    //         throw new Error(`HTTP error! Status: ${response}`);
-    //       }
-    //       setResData(response as apiResponceType<T>);
-    //     } catch (error: any) {
-    //       alert(JSON.stringify({ error }))
-
-    //       setError(String(error?.message));
-    //     } finally {
-    //       setIsLoading(false);
-    //     }
-    //   };
-    //   fetchData();
-    // }, [endpoint, data]);
-    // return { data: resData, error, isLoading };
+    const { data, config, toastMessages, withToast = true, params } = postProp || {};
+    return this.request<apiResponceType<T>>('post', endpoint, { data, config, toastMessages, withToast, params });
   }
 
-  put<T>(endpoint: string, { data, config, toastMessages, withToast = true }: { data?: any, config?: AxiosRequestConfig, toastMessages?: toastMessagesType, withToast: boolean }): Promise<T> {
-    const resolveWithSomeData = this.request<T>('put', endpoint, { data, config, toastMessages, withToast });
-    return resolveWithSomeData
+  put<T = any>(endpoint: string, { data, config, toastMessages, withToast = true, params }: { data?: any, config?: AxiosRequestConfig, toastMessages?: toastMessagesType, withToast: boolean; params?: Record<string, string> }) {
+    return this.request<apiResponceType<T>>('put', endpoint, { data, config, toastMessages, withToast, params });
   }
 
-  delete<T>(endpoint: string, { config, toastMessages, withToast = true }: { config?: AxiosRequestConfig, toastMessages?: toastMessagesType; withToast: boolean }): Promise<T> {
-    const resolveWithSomeData = this.request<T>('delete', endpoint, { config, toastMessages, withToast });
+  delete<T = any>(endpoint: string, { config, toastMessages, withToast = true, params }: { config?: AxiosRequestConfig, toastMessages?: toastMessagesType; withToast: boolean; params?: Record<string, string> }) {
+    const resolveWithSomeData = this.request<apiResponceType<T>>('delete', endpoint, { config, toastMessages, withToast, params });
     return resolveWithSomeData
   }
 

@@ -8,9 +8,22 @@ export const handleCustomerGET = async (req: Request, res: Response) => {
         const offset = (Number(page) - 1) * Number(pageSize);
         const limit = Number(pageSize);
         const org_code = req.auth?.user?.org_code;
-        const { rows } = await pool.query('select * from customer where org_code= $1  ORDER BY updated_at LIMIT $2 OFFSET $3;', [org_code, limit, offset]);
+        const searchTerm = req.query.search as string || '';
 
-        if (rows) {
+        const query = `
+        SELECT
+          *
+        FROM customer
+        WHERE 
+          (LOWER(cust_id::TEXT || cust_name || address) LIKE $1
+          OR LOWER(phone || email) LIKE $1)
+          AND org_code = $2
+        ORDER BY updated_at DESC
+        LIMIT $3 OFFSET $4;
+      `
+        const { rows } = await pool.query(query, [`%${searchTerm.toLowerCase()}%`, org_code, limit, offset]);
+
+        if (rows?.length) {
             return ResponseHandler(res, {
                 resType: 'success',
                 status: 'OK',

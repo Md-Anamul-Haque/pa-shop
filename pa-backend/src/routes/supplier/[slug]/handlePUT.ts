@@ -6,9 +6,9 @@ import Joi from 'joi';
 const schema = Joi.object({
     org_code: Joi.string(),
     supp_name: Joi.string().required(),
-    address: Joi.string(),
+    address: Joi.string().allow('').optional(),
     phone: Joi.string(),
-    email: Joi.string().email()
+    email: Joi.string().email().allow('').optional()
 });
 export const handleSupplierPUT = async (req: Request, res: Response) => {
     try {

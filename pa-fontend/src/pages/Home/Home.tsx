@@ -1,38 +1,17 @@
 /* Core */
-import { useEffect, useState } from 'react'
 
 /* Instruments */
-import ApiClient from '@/lib/ApiClient'
 import {
-    counterSlice,
-    incrementAsync,
-    incrementIfOddAsync,
-    selectCount,
-    useDispatch,
-    useSelector,
-} from '@/lib/redux'
+    useSelector
+} from '@/lib/redux';
+import { selectUser } from '@/lib/redux/slices/userSlice';
+
 const Home = () => {
-    const dispatch = useDispatch()
-    const count = useSelector(selectCount)
-    const [incrementAmount, setIncrementAmount] = useState(2)
-    const api = new ApiClient('http://localhost:8000');
-
-    // Example usage
-    async function fetchData() {
-        try {
-            const data = await api.get('/ip');
-            console.log('Data:', data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
-
-    useEffect(() => {
-        fetchData()
-    }, [])
+    const user = useSelector(selectUser)
     return (
         <div>
-            <div className={'styles.row'}>
+            {JSON.stringify({ user })}
+            {/* <div className={'styles.row'}>
                 <button
                     className={'styles.button'}
                     aria-label="Decrement value"
@@ -76,7 +55,7 @@ const Home = () => {
                 >
                     Add If Odd
                 </button>
-            </div>
+            </div> */}
         </div>
     )
 }

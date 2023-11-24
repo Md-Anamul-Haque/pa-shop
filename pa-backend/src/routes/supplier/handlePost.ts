@@ -6,9 +6,9 @@ import Joi from 'joi';
 const schema = Joi.object({
     org_code: Joi.string(),
     supp_name: Joi.string().required(),
-    address: Joi.string(),
+    address: Joi.string().allow('').optional(),
     phone: Joi.string(),
-    email: Joi.string().email()
+    email: Joi.string().email().allow('').optional()
 });
 export const handleSupplierPOST = async (req: Request, res: Response) => {
     try {
@@ -21,9 +21,8 @@ export const handleSupplierPOST = async (req: Request, res: Response) => {
             throw new Error(validationError.details[0].message)
         }
         // start Check if the supplier name already exists
-        const checkResult = await pool.query('SELECT * FROM supplier WHERE org_code = $1 AND supp_name = $2 AND phone = $3', [
+        const checkResult = await pool.query('SELECT * FROM supplier WHERE org_code = $1 AND phone = $2', [
             org_code,
-            supp_name,
             phone
         ]);
         if (checkResult.rows.length > 0) {
@@ -31,7 +30,7 @@ export const handleSupplierPOST = async (req: Request, res: Response) => {
             return ResponseHandler(res, {
                 resType: 'error',
                 status: 'BAD_REQUEST',
-                message: 'this supplier (name,phone) already exists :' + checkResult.rows[0]?.supp_id
+                message: 'this phone number already exists :' + checkResult.rows[0]?.supp_id
             });
         }
         // end of Check if the supplier name already exists

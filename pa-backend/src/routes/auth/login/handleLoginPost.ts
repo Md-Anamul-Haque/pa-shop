@@ -31,6 +31,7 @@ async function findAndCheckUser(email: string, password: string): Promise<findAn
 
 export const handleLoginPOST = async (req: Request, res: Response) => {
     try {
+        console.log('token', req.cookies?.['token'])
         const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         if (!clientIP) {
             throw new Error('not a valid request. clientIP not found');
@@ -50,21 +51,20 @@ export const handleLoginPOST = async (req: Request, res: Response) => {
         console.log({ session })
         if (!session || !session?.user_id) throw new Error('session not created');
         res.cookie('token', String(token), {
-            // secure: process.env.NODE_ENV === 'development' ? false : true, for only https
-            sameSite: 'none',
+            // secure: process.env.NODE_ENV === 'development' ? false : true, 
+            // sameSite: 'none',
             path: "/",
             httpOnly: true,  // only can get this server
             // domain: `.${process.env.CLINT_URL}`,
             // maxAge: ''
         });
-        // res.cookie("client_token/", String('tokenClient'), {
-        //     sameSite: 'none',
-        //     path: "/",
-        //     httpOnly: false,
-        //     // domain: `.${process.env.CLINT_URL }`,
-        //     // maxAge: ''
-        // });
-
+        res.cookie("client_token/", String('tokenClient'), {
+            // sameSite: 'none',
+            path: "/",
+            httpOnly: false,
+            // domain: `.${process.env.CLINT_URL}`,
+            // maxAge: ''
+        });
         if (token) {
             return ResponseHandler(res, {
                 resType: 'success',

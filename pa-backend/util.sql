@@ -8,9 +8,9 @@ SELECT uuid_generate_v4();
 -- (1 row)
 
 
-
+-- -------------
 CREATE OR REPLACE VIEW stock_vw AS
-select v.org_code, v.prod_id, p.prod_name, v.qty , p.bar_qr_code ,p.prod_type, p.brand, p.category, p.price
+select v.org_code, v.prod_id, p.prod_name, v.qty, p.bar_qr_code ,p.prod_type, p.brand, p.category, p.price, p.uom 
 from(
 SELECT org_code, prod_id, SUM(
     CASE 
@@ -57,7 +57,7 @@ GROUP BY org_code, prod_id
 ) v , product p
 where v.org_code = p.org_code
 and v.prod_id = p.prod_id;
-
+-- ---------------------
 
 
 

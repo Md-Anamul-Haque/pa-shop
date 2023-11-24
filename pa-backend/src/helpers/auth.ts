@@ -19,7 +19,6 @@ const handleAuth = async (req: Request, res: Response, next: NextFunction) => {
         const decoded: any = jwt.verify(token, config.app.jwtSecretKey);
         const { user_id, ip: decodedIp } = decoded;
         if (decodedIp !== clientIP) { return ResponseHandler(res, { resType: 'authError', message: 'ip  not match' }) }
-        // console.log({ user_id })
         const { rows } = await pool.query(
             `SELECT u.org_code, u.user_id, u.first_name, u.last_name, u.email, u.password, u.role, u.is_active,
                     us.session_id, us.token, us.tokenClient, us.created_at, us.expires_at
@@ -27,7 +26,6 @@ const handleAuth = async (req: Request, res: Response, next: NextFunction) => {
              JOIN user_session us ON u.user_id = us.user_id AND u.user_id = $1 AND u.is_active = true
              WHERE us.token = $2 AND us.user_id = $3`,
             [user_id, token, user_id]);
-        // console.log({ rows })
         const userAndSession = rows[0];
         if (user_id && userAndSession?.org_code && userAndSession?.user_id && userAndSession?.email) {
             req.auth = {
@@ -51,6 +49,13 @@ const handleAuth = async (req: Request, res: Response, next: NextFunction) => {
             });
         }
     } catch (error) {
+        if ('jwt expired' === (error as any)?.message) {
+            return ResponseHandler(res, {
+                resType: 'authError',
+                status: 'NON_AUTHORITATIVE_INFORMATION',
+                message: (error as any)?.message || ''  //your can any message 
+            })
+        }
         return ResponseHandler(res, {
             resType: 'error',
             message: (error as any)?.message || ''  //your can any message 

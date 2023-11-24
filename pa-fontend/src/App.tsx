@@ -5,6 +5,7 @@ import Layout from './pages/Layout.tsx'
 import Login from './pages/Login/Login.tsx'
 import Products from './pages/Product/Product.tsx'
 import Product from './pages/Product/[prod_id]/page.tsx'
+import Purchase from './pages/Purchase/Purchase.tsx'
 import Suppliers from './pages/Supplier/Supplier.tsx'
 import Users from './pages/User/User.tsx'
 const router = createBrowserRouter([
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: 'user',
         element: <Users />
+      },
+      {
+        path: 'purchase',
+        element: <Purchase />
       }
     ]
   },

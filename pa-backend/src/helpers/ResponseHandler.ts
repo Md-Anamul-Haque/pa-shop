@@ -28,8 +28,8 @@ export const ResponseHandler = (res: Response, params: responseHandlerType) => {
             "message": params?.message || StatusCodes[statusCode] || 'error',
         })
     } else if (params?.resType === 'authError') {
-        // console.log('you are not authorized')
-        return res.status(statusCode).json({
+        // console.log('you are not authorized') res with status 200 is must for "fontend handle"
+        return res.status(200).json({
             "success": false,
             "message": params?.message || StatusCodes[statusCode], // || 'Unauthorized: User not logged in',
             "isAuth": 'no'

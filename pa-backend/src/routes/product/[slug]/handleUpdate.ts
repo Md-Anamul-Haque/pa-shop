@@ -9,16 +9,16 @@ const schema = Joi.object({
     prod_type: Joi.string().required(),
     uom: Joi.string().required(),
     price: Joi.number().required(),
-    brand: Joi.string(),
-    category: Joi.string(),
-    bar_qr_code: Joi.string()
+    brand: Joi.string().allow('').optional(),
+    category: Joi.string().allow('').optional(),
+    bar_qr_code: Joi.string().allow('').optional(),
 });
 export const handleProductPUT = async (req: Request, res: Response) => {
     try {
         // ... handle PUT logic start hear
         const org_code = req.auth?.user?.org_code;
         const prod_id = req?.params?.slug;
-        const { prod_name, prod_type, uom, price, bar_qr_code, brand, category }: productType = req.body;
+        const { prod_name, prod_type, uom, price, bar_qr_code = '', brand, category }: productType = req.body;
         const { error: validationError } = schema.validate({ org_code, prod_name, prod_type, uom, price, bar_qr_code, brand, category });
         if (validationError) {
             throw new Error(validationError.details[0].message)
@@ -55,7 +55,7 @@ export const handleProductPUT = async (req: Request, res: Response) => {
         if (updateProduct) {
             return ResponseHandler(res, {
                 resType: 'success',
-                status: 'UPGRADE_REQUIRED',
+                status: 'OK',
                 message: 'Product updated successfully',
                 payload: updateProduct // your can any data for responce
             });

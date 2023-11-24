@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 @layer base {
+
+
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -71,7 +73,20 @@
     @apply border-border;
   }
 
+  .input {
+    @apply h-9 w-full border border-input bg-transparent px-3 py-1 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  td {
+    padding: 0;
+  }
+
+  .purchesList.input {
+    height: 25px
+  }
+
   body {
     @apply bg-background text-foreground;
   }
+
 }
