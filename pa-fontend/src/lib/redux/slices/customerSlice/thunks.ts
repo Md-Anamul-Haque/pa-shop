@@ -1,7 +1,7 @@
 /* Instruments */
 import { createAppAsyncThunk } from '@/lib/redux/createAppAsyncThunk';
 import { customerType } from '@/types/tables.type';
-import { createCustomer, fetchCustomers, updateCustomer } from './fetchIdentityCount';
+import { createCustomer, fetchCustomers, updateCustomer } from './fetchIdentityCustomer';
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
@@ -14,7 +14,7 @@ export const customerGetAsync = createAppAsyncThunk(
         const response = await fetchCustomers(searchProps)
         // The value we return becomes the `fulfilled` action payload
         if (response.success) {
-            return response.payload
+            return response.payload?.customer
         } else {
             throw new Error(response.message)
         }

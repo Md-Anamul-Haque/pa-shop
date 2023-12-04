@@ -1,7 +1,8 @@
 /* Instruments */
 import { createAppAsyncThunk } from '@/lib/redux/createAppAsyncThunk';
 import { productType } from '@/types/tables.type';
-import { createProduct, fetchProducts, updateProduct } from './fetchIdentityCount';
+import { userSlice } from '..';
+import { createProduct, fetchProducts, updateProduct } from './fetchIdentityProduct';
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
@@ -10,12 +11,15 @@ import { createProduct, fetchProducts, updateProduct } from './fetchIdentityCoun
 // typically used to make async requests.
 export const productGetAsync = createAppAsyncThunk(
     'product/fetchProducts',
-    async (searchProps?: { search?: string; skip?: number }) => {
+    async (searchProps: { search?: string; skip?: number } = {}, { dispatch }) => {
         const response = await fetchProducts(searchProps)
         // The value we return becomes the `fulfilled` action payload
         if (response.success) {
-            return response.payload
+            return response.payload.products
         } else {
+            if (response.isAuth == 'no') {
+                dispatch(userSlice.actions.setIsAuth('no'))
+            }
             throw new Error(response.message)
         }
     }

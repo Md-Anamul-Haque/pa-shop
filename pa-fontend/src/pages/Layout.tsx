@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from '@/lib/redux'
 import { selectUser, userAsync, userSlice } from '@/lib/redux/slices/userSlice'
 import axios from 'axios'
 import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 const Layout = () => {
     const dispatch = useDispatch()
     const user = useSelector(selectUser)
+    const navigate = useNavigate()
     useEffect(() => {
         dispatch(userAsync())
     }, [dispatch])
@@ -27,9 +28,14 @@ const Layout = () => {
         });
 
     }, [])
+    useEffect(() => {
+        if (user.isAuth == 'no') {
+            navigate('/login')
+        }
+    }, [user.isAuth])
 
     return (
-        <div className='px-2'>
+        <div className='px-2 w-full'>
             {/* make a modal if user.isAuth =='no' then open  */}
             {user.isAuth == 'no' && <Card className='fixed inset-0 h-full w-full bg-orange-500'>
                 <h1 className='text-center text-2xl font-bold'>Please Login</h1>

@@ -1,5 +1,5 @@
 /* Instruments */
-import { counterSlice, customerSlice, productSlice, purchaseSlice, supplierSlice, userSlice } from './slices'
+import { counterSlice, customerSlice, productSlice, purchaseSlice, salesSlice, supplierSlice, userSlice } from './slices'
 
 export const reducer = {
     counter: counterSlice.reducer,
@@ -8,4 +8,5 @@ export const reducer = {
     suppliers: supplierSlice.reducer,
     customers: customerSlice.reducer,
     purchase: purchaseSlice.reducer,
+    sale: salesSlice.reducer
 }

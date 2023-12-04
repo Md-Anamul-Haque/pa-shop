@@ -12,7 +12,7 @@ const newRowSchema = Joi.object({
     org_code: Joi.string(),
     pur_id: Joi.string().required(),
     prod_id: Joi.string().required(),
-    uom: Joi.string().required(),
+    // uom: Joi.string().required(),
     qty: Joi.number().required(),
     unit_price: Joi.number().required(),
 });
@@ -35,20 +35,7 @@ export const handlePurchasePOST = async (req: Request, res: Response) => {
         const org_code = req.auth?.user?.org_code as string;
 
         const { mt, dts }: reqBodyDataType = req.body;
-        // const [pur_date] = await sql`select TO_DATE(${mt?.pur_date || sql`now()`}, 'YYYY-MM-DD') as pur_date`;
-        // console.log({ pur_date })
-        // const subQuery_forPur_id = String(`(
-        //     SELECT 
-        //       CASE 
-        //         WHEN COUNT(*) = 0 OR MAX(CASE WHEN org_code = '${org_code}' THEN 1 ELSE 0 END) = 0 
-        //         THEN 'PUR_1'
-        //         ELSE 'PUR_' || (COALESCE(
-        //           MAX(CAST(SPLIT_PART(pur_id, '_', 2) AS INTEGER)), 0) + 1)::TEXT
-        //       END
-        //     FROM 
-        //     purchase_mt 
-        //   )
-        //   `);
+
         const { rows: [{ pur_id }] } = await pool.query(`SELECT 
               CASE 
                 WHEN COUNT(*) = 0 OR MAX(CASE WHEN org_code = '${org_code}' THEN 1 ELSE 0 END) = 0 
@@ -74,24 +61,22 @@ export const handlePurchasePOST = async (req: Request, res: Response) => {
             throw new Error('newMtData:' + validationError_mt.details[0].message)
         }
 
-        console.log({ newMtData })
         const [purchaseMtResult, purchaseDtResult] = await sql.begin(async sql => {
             const [purchaseMtResult] = await sql`insert into purchase_mt ${sql(newMtData, 'pur_id', 'org_code', 'pur_date', 'supp_id', 'discount', 'vat', 'paid_amt')} returning *`;
-            const newPurchaseDtValues = dts.map((dt: purchaseDetailType) => (
-                {
+            const newPurchaseDtValues = dts.map(({ prod_id, qty, unit_price }: purchaseDetailType) => {
+                return ({
                     org_code,
                     pur_id: purchaseMtResult.pur_id,
-                    prod_id: dt.prod_id,
-                    uom: dt.uom,
-                    qty: Number(dt.qty),
-                    unit_price: Number(dt.unit_price),
-                }
-            ));
+                    prod_id: prod_id,
+                    qty: Number(qty),
+                    unit_price: Number(unit_price),
+                });
+            });
             const { error: validationError_dt } = schema.newPurchaseDtValues.validate(newPurchaseDtValues);
             if (validationError_dt) {
                 throw new Error('newdt:' + validationError_dt.details[0].message)
             }
-            const purchaseDtResult = await sql`INSERT INTO purchase_dt${sql(newPurchaseDtValues, 'org_code', 'pur_id', 'prod_id', 'uom', 'qty', 'unit_price')} returning *`;
+            const purchaseDtResult = await sql`INSERT INTO purchase_dt${sql(newPurchaseDtValues, 'org_code', 'pur_id', 'prod_id', 'qty', 'unit_price')} returning *`;
             return [purchaseMtResult, purchaseDtResult]
         });
         if (purchaseMtResult) {
@@ -110,6 +95,7 @@ export const handlePurchasePOST = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.log('ROLLBACK')
+        console.log(error)
         return ResponseHandler(res, {
             resType: 'error',
             status: 'INTERNAL_SERVER_ERROR',

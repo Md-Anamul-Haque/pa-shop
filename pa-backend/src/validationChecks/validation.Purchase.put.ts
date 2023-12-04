@@ -16,7 +16,7 @@ const newRowSchema = Joi.object({
     org_code: Joi.string(),
     pur_id: Joi.string().required(),
     prod_id: Joi.string().required(),
-    uom: Joi.string().required(),
+    // uom: Joi.string().required(),
     qty: Joi.number().required(),
     unit_price: Joi.number().required(),
 });
@@ -24,7 +24,7 @@ const newRowSchema = Joi.object({
 const changeRowSchema = Joi.object({
     pur_dt_id: Joi.number().required(),
     prod_id: Joi.string().required(),
-    uom: Joi.string().required(),
+    // uom: Joi.string().required(),
     qty: Joi.number().required(),
     unit_price: Joi.number().required()
 });
@@ -52,7 +52,7 @@ const validationPurchase_put = (req: Request) => {
     const updateRowsData = changeRows?.map(dt => [
         Number(dt.pur_dt_id),
         dt.prod_id,
-        dt.uom,
+        // dt.uom,
         Number(dt.qty),
         Number(dt.unit_price)
     ]);
@@ -71,7 +71,7 @@ const validationPurchase_put = (req: Request) => {
             org_code,
             pur_id,
             prod_id: dt.prod_id,
-            uom: dt.uom,
+            // uom: dt.uom,
             qty: Number(dt.qty),
             unit_price: Number(dt.unit_price),
         }

@@ -46,7 +46,7 @@ export type purchaseDetailType = {
     pur_id: string;
     pur_dt_id?: number;
     prod_id: string;
-    uom: string;
+    // uom: string;
     qty: number;
     unit_price: number;
 }
@@ -86,7 +86,7 @@ export type salesDetailType = {
     sales_dt_id?: number;
     sales_id: string;
     prod_id: string;
-    uom: string;
+    // uom: string;
     qty: number;
     unit_price: number;
 }

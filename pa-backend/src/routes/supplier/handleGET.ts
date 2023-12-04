@@ -27,7 +27,7 @@ export const handleSupplierGET = async (req: Request, res: Response) => {
         console.log({ searchTerm })
         const { rows } = await pool.query(query, [`%${searchTerm.toLowerCase()}%`, org_code, limit, offset]);
         // const { rows } = await pool.query('select * from supplier where org_code= $1  ORDER BY updated_at DESC LIMIT $2 OFFSET $3;', [org_code, limit, offset]);
-        if (rows) {
+        if (rows.length) {
             const { rows: totalRow } = await pool.query('select count(*) as total_row from supplier where org_code= $1;', [org_code]);
             const total_row = Number(totalRow?.[0]?.total_row)
             return ResponseHandler(res, {

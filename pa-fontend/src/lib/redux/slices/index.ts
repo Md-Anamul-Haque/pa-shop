@@ -4,4 +4,4 @@ export * from './productSlice';
 export * from './purchase';
 export * from './supplierSlice';
 export * from './userSlice';
-
+export * from './sales'

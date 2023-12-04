@@ -99,7 +99,7 @@ CREATE TABLE purchase_dt (
     pur_id VARCHAR(50),
     -- pur_date DATE,
     prod_id VARCHAR(50),
-    uom VARCHAR(50) NOT NULL,
+    -- uom VARCHAR(50) NOT NULL,
     qty INT,
     unit_price DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

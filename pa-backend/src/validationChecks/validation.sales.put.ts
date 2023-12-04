@@ -55,7 +55,7 @@ const validationSales_put = (req: Request) => {
     const updateRowsData = changeRows?.map(dt => [
         Number(dt.sales_dt_id),
         dt.prod_id,
-        dt.uom,
+        // dt.uom,
         Number(dt.qty),
         Number(dt.unit_price)
     ]);
@@ -74,7 +74,7 @@ const validationSales_put = (req: Request) => {
             org_code,
             sales_id,
             prod_id: dt.prod_id,
-            uom: dt.uom,
+            // uom: dt.uom,
             qty: Number(dt.qty),
             unit_price: Number(dt.unit_price),
         }

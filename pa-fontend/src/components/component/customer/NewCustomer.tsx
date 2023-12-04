@@ -14,6 +14,7 @@ import {
     FormMessage
 } from "@/components/ui/form";
 import { customerPostAsync, customerSlice, selectCustomers, useDispatch, useSelector } from "@/lib/redux";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Tooltip } from "@mui/material";
 import TextField from '@mui/material/TextField';
@@ -33,8 +34,11 @@ const formSchema: z.ZodType<customerSchemaType> = z.object({
     phone: z.string(),
     email: z.string().email().optional(),
 });
-
-const NewCustomer = () => {
+type Props = {
+    onNewSupplier?: (supplier: any) => void;
+    triggerTextClass?: string;
+}
+const NewCustomer = ({ onNewSupplier, ...props }: Props) => {
     const dispatch = useDispatch()
     const newState = useSelector(selectCustomers).new;
     const { open, isLoading, error: isError } = newState
@@ -59,7 +63,8 @@ const NewCustomer = () => {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         try {
-            dispatch(customerPostAsync(values))
+            const newCust = await dispatch(customerPostAsync(values))
+            onNewSupplier && onNewSupplier(newCust.payload)
         } catch (error: any) {
             console.log({ error })
         }
@@ -68,9 +73,12 @@ const NewCustomer = () => {
     return (
         <AlertDialog open={open}>
             <Tooltip title="you can create alaways and update but not possible to delete anyway">
-                <AlertDialogTrigger className={buttonVariants({ size: 'sm' })} onClick={handleOpen}>
-                    <PlusIcon className="h-5 w-5" />
-                    <span className="hidden md:inline-block">New Customer</span>
+                <AlertDialogTrigger className={buttonVariants({ size: 'sm', variant: "outline" })} onClick={handleOpen}>
+                    <>
+                        <PlusIcon className="h-5 w-5" />
+                        <span className={cn("hidden md:inline-block", props.triggerTextClass)}>New Supplier</span>
+                        {/* <span className="hidden md:inline-block" >New Customer</span> */}
+                    </>
                 </AlertDialogTrigger>
             </Tooltip>
             <AlertDialogContent className="overflow-auto max-h-[75vh] text-foreground">

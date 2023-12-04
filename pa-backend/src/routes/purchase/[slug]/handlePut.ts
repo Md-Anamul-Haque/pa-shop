@@ -27,12 +27,11 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
                                                         UPDATE purchase_dt 
                                                         SET 
                                                             prod_id = update_data.prod_id,
-                                                            uom = update_data.uom,
                                                             qty = (update_data.qty)::int,
                                                             unit_price = (update_data.unit_price)::int,
                                                             updated_at = now()
                                                         FROM 
-                                                            (VALUES ${sql(changeRows)}) AS update_data (pur_dt_id, prod_id, uom, qty, unit_price)
+                                                            (VALUES ${sql(changeRows)}) AS update_data (pur_dt_id, prod_id, qty, unit_price)
                                                         WHERE 
                                                             purchase_dt.pur_dt_id = (update_data.pur_dt_id)::int 
                                                             AND purchase_dt.org_code = ${org_code}
@@ -41,7 +40,7 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
 
 
             const newDtResult = newRows && await sql`
-                                                    INSERT INTO purchase_dt${sql(newRows, 'org_code', 'pur_id', 'prod_id', 'uom', 'qty', 'unit_price')} 
+                                                    INSERT INTO purchase_dt${sql(newRows, 'org_code', 'pur_id', 'prod_id','qty', 'unit_price')} 
                                                     RETURNING *`;
             const deleteExisting = deleteRows && await sql`
                                                             DELETE FROM purchase_dt WHERE pur_dt_id IN(${deleteRows}) and org_code = ${org_code} 

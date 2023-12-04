@@ -13,7 +13,6 @@ const newRowSchema = Joi.object({
     org_code: Joi.string(),
     sales_id: Joi.string().required(),
     prod_id: Joi.string().required(),
-    uom: Joi.string().required(),
     qty: Joi.number().required(),
     unit_price: Joi.number().required(),
 });
@@ -72,7 +71,6 @@ export const handleSalesPOST = async (req: Request, res: Response) => {
                     org_code,
                     sales_id: salesMtResult.sales_id,
                     prod_id: dt.prod_id,
-                    uom: dt.uom,
                     qty: Number(dt.qty),
                     unit_price: Number(dt.unit_price),
                 }
@@ -81,7 +79,7 @@ export const handleSalesPOST = async (req: Request, res: Response) => {
             if (validationError_dt) {
                 throw new Error('newdt:' + validationError_dt.details[0].message)
             }
-            const salesDtResult = await sql`INSERT INTO sales_dt${sql(newSalesDtValues, 'org_code', 'sales_id', 'prod_id', 'uom', 'qty', 'unit_price')} returning *`;
+            const salesDtResult = await sql`INSERT INTO sales_dt${sql(newSalesDtValues, 'org_code', 'sales_id', 'prod_id', 'qty', 'unit_price')} returning *`;
 
             return ([salesMtResult, salesDtResult])
         });

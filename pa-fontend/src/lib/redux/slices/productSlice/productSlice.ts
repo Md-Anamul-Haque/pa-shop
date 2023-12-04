@@ -7,7 +7,8 @@ import { productGetAsync, productPostAsync, productPutAsync } from './thunks';
 const geteditIngProduct = (data: productType[]) => {
     let params = new URL(document.location.href).searchParams;
     let edit = params.get("edit"); // is the string "Jonathan Smith".
-    const editProduct = data.filter(d => d.prod_id === edit)
+    if (!edit && !Array.isArray(data)) return undefined;
+    const editProduct = data?.filter(d => d.prod_id === edit)
     return editProduct?.[0] || undefined
 }
 const initialState: ProductSliceState = {
@@ -52,7 +53,8 @@ export const productSlice = createSlice({
             .addCase(productGetAsync.fulfilled, (state, action) => {
                 state.isLoading = false
                 state.data = action.payload
-                state.update.product = geteditIngProduct(state.data)
+                console.log(action.payload)
+                state.update.product = geteditIngProduct(action.payload)
             }).addCase(productGetAsync.rejected, (state, action) => {
                 state.error = action?.error?.message || 'error';
                 state.isLoading = false;
@@ -64,7 +66,7 @@ export const productSlice = createSlice({
             .addCase(productPutAsync.fulfilled, (state, action) => {
                 state.update.isLoading = false;
                 console.log({ p: action.payload })
-                state.data = [action.payload, ...state.data.filter(d => d.prod_id !== action.payload.prod_id)]
+                state.data = [action.payload, ...state.data?.filter(d => d.prod_id !== action.payload.prod_id) || []]
                 state.update.product = undefined;
             }).addCase(productPutAsync.rejected, (state, action) => {
                 state.update.error = action?.error?.message || 'error';

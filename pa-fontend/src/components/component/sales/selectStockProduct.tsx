@@ -8,7 +8,7 @@ type Props = {
     className?: string
     value?: OptionType;
 }
-const selectApi = new ApiClient('/api/product')
+const selectApi = new ApiClient('/api/stock')
 const ItemChildren: FC<{ item: OptionType }> = ({ item }) => {
     return (
         <p className="w-full text-xs italic">
@@ -26,7 +26,7 @@ const ProductIcon = () => {
     );
 };
 
-const SelectProduct = (props: Props) => {
+const SelectStockProduct = (props: Props) => {
     const [hasMore, setHasMore] = useState(true)
     const [totalHas, setTotalHas] = useState<number>(0)
     const handleFetch = useCallback(async (search: string) => {
@@ -35,7 +35,7 @@ const SelectProduct = (props: Props) => {
         });
         let returnvalue: any[] = []
         if (resdata.success) {
-            returnvalue = resdata?.payload?.products?.map((item: productType) => ({
+            returnvalue = resdata?.payload?.stocks?.map((item: productType) => ({
                 id: item.prod_id,
                 label: item.prod_name,
                 ...item
@@ -58,7 +58,7 @@ const SelectProduct = (props: Props) => {
         });
         let returnvalue: any[] = [];
         if (resdata.success) {
-            returnvalue = resdata.payload?.products?.map((item: productType) => ({
+            returnvalue = resdata.payload?.stocks?.map((item: productType) => ({
                 id: item.prod_id,
                 label: item.prod_name,
                 ...item
@@ -95,4 +95,4 @@ const SelectProduct = (props: Props) => {
     )
 }
 
-export default SelectProduct
+export default SelectStockProduct

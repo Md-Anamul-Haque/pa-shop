@@ -75,14 +75,14 @@ const NewSupplier = ({ onNewSupplier, ...props }: Props) => {
 
     return (
         <AlertDialog open={open}>
-            <AlertDialogTrigger className={buttonVariants({ size: 'sm', variant: "outline" })} onClick={handleOpen}>
-                <Tooltip title="you can create alaways and update but not possible to delete anyway">
+            <Tooltip title="you can create alaways and update but not possible to delete anyway">
+                <AlertDialogTrigger className={buttonVariants({ size: 'sm', variant: "outline" })} onClick={handleOpen}>
                     <>
                         <PlusIcon className="h-5 w-5" />
                         <span className={cn("hidden md:inline-block", props.triggerTextClass)}>New Supplier</span>
                     </>
-                </Tooltip>
-            </AlertDialogTrigger>
+                </AlertDialogTrigger>
+            </Tooltip>
             <AlertDialogContent className="overflow-auto max-h-[75vh] text-foreground">
                 {isLoading && <div className="w-full h-full absolute inset-0 animate-pulse bg-slate-500/30 bg-opacity-30 z-20 grid place-items-center">
                     <div className="flex justify-center items-center">

@@ -7,7 +7,7 @@ const customerApi = new ApiClient('/api/customer');
 export const fetchCustomers = (searchProps?: { search?: string; skip?: number }) => {
     const search = searchProps?.search || '';
     const skip = searchProps?.skip || 0;
-    return customerApi.get<customerType[]>(`?search=${search}&skip=${skip}`);
+    return customerApi.get<{ customer: customerType[] }>(`?search=${search}&skip=${skip}`);
 };
 
 

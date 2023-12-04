@@ -1,3 +1,5 @@
+import { stockType } from "./stock";
+
 // tables.type.d.ts
 export type orgType = {
     org_code: string;
@@ -31,11 +33,11 @@ export type productType = {
 
 export type purchaseMasterType = {
     pur_id?: string;
-    pur_date?: Date;
-    supp_id: string;
-    discount?: number;
-    vat?: number;
-    paid_amt: number;
+    pur_date?: string;
+    supp_id?: string;
+    discount?: number | string;
+    vat?: number | string;
+    paid_amt?: number | string;
 }
 
 export type purchaseDetailType = {
@@ -44,17 +46,17 @@ export type purchaseDetailType = {
     pur_dt_id?: number;
     prod_id: string;
     uom: string;
-    qty: number;
-    unit_price: number;
+    qty: number | string;
+    unit_price: number | string;
 }
 export type purchaseReturnMasterType = {
     org_code: string;
     pur_r_id: string;
-    pur_r_date?: Date;
+    pur_r_date?: string;
     supp_id: string;
-    discount?: number;
-    vat?: number;
-    paid_amt: number;
+    discount?: number | string;
+    vat?: number | string;
+    paid_amt: number | string;
     remark?: string
 }
 
@@ -63,34 +65,34 @@ export type purchaseReturnDetailType = {
     pur_r_id: string;
     pur_r_dt_id?: number;
     prod_id: string;
-    uom: string;
-    qty: number;
-    unit_price: number;
+    uom: string | string;
+    qty: number | string;
+    unit_price: number | string;
 }
 
 export type salesMasterType = {
-    org_code: string;
-    sales_id: string;
-    sales_date: Date;
-    cust_id: string;
-    discount?: number;
-    vat?: number;
-    paid_amt: number;
+    sales_date?: string;
+    cust_id?: string;
+    discount?: number | string;
+    vat?: number | string;
+    paid_amt?: number | string;
 }
 
 export type salesDetailType = {
-    org_code: string;
-    sales_dt_id?: number;
-    sales_id: string;
+    // sales_id: string;
+    prod_name?: string;
     prod_id: string;
     uom: string;
-    qty: number;
-    unit_price: number;
+    qty: number | string;
+    unit_price: number | string;
+
+    // extra data for handle sales page of fontend
+    stocProduct?: stockType;
 }
 export type salesReturnMasterType = {
     org_code: string;
     sales_r_id: string;
-    sales_r_date: Date;
+    sales_r_date: string;
     cust_id: string;
     discount?: number;
     vat?: number;
