@@ -61,16 +61,16 @@ const nextIndex = (saleDts: salesDetailType[], idx: number, key: string, isnext:
     return returnValue;
 };
 
-function handleClearSales(state: salesSliceState) {
-    state.isLoading = false
-    state.saleDts = [];
-    state.saleMt = { paid_amt: 0, cust_id: '', };
-    state.customer = undefined;
-    state.isFocus = undefined;
-    console.log('clear')
-    console.log(state)
-    return state;
-}
+// function handleClearSales(state: salesSliceState) {
+//     state.isLoading = false
+//     state.saleDts = [];
+//     state.saleMt = { paid_amt: 0, cust_id: '', };
+//     state.customer = undefined;
+//     state.isFocus = undefined;
+//     console.log('clear')
+//     console.log(state)
+//     return state;
+// }
 export const salesSlice = createSlice({
     name: 'sells',
     initialState,
@@ -128,7 +128,8 @@ export const salesSlice = createSlice({
             state.saleMt = { ...state.saleMt, sales_date: action.payload }
         },
         clearSales(state) {
-            return handleClearSales(state);
+            // return handleClearSales(state);
+            state = initialState
         }
     },
 })

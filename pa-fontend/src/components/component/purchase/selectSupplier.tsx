@@ -6,7 +6,7 @@ import { FC, useCallback, useState } from "react"
 type Props = {
     onSelected: (value: any) => void;
     className?: string
-    value?: string;
+    value?: OptionType | string;
 }
 const selectApi = new ApiClient('/api/supplier')
 const ItemChildren: FC<{ item: OptionType }> = ({ item }) => {
@@ -92,6 +92,7 @@ const SelectSupplier = (props: Props) => {
                 triggerButton: 'line-clamp-1',
                 popoverContent: 'overflow-auto h-80'
             }}
+
             className={props.className}
             next_is="scroll"
             hasMore={hasMore}

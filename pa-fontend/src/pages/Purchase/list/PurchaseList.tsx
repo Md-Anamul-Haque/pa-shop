@@ -11,6 +11,7 @@ const Pur: FC = () => {
         </Card>
     )
 }
+
 const PurchaseList = () => {
     return (
         <div className='flex gap-3 justify-center flex-wrap'>

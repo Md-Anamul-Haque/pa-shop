@@ -147,7 +147,7 @@ const SalesHandlerMobile = ({ onNext, onSubmited }: { onNext: (incre: number) =>
                         <tr>
                             <td className='' colSpan={6}>
                                 <ShadCnUiButton isLoading={isLoading} onClick={handleSubmit} className="w-full" type="submit" disabled={!(_sum || saleDts.length)}>
-                                    Purchase now
+                                    sell now
                                 </ShadCnUiButton>
                             </td>
                         </tr>

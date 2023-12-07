@@ -6,7 +6,7 @@ import { FC, useCallback, useState } from "react"
 type Props = {
     onSelected: (value: any) => void;
     className?: string
-    value?: string;
+    value?: OptionType | string;
 }
 const selectApi = new ApiClient('/api/customer')
 const ItemChildren: FC<{ item: OptionType }> = ({ item }) => {
@@ -84,8 +84,8 @@ const SelectCustomer = (props: Props) => {
             ItemChildren={ItemChildren}
             onFetch={handleFetch}
             onFetchNext={handleFetchNext}
-            onSelect={(p)=>{
-                console.log({p})
+            onSelect={(p) => {
+                console.log({ p })
                 props.onSelected(p)
             }}
             name="customer"

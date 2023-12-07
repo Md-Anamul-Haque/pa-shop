@@ -50,20 +50,18 @@ export type purchaseDetailType = {
     unit_price: number | string;
 }
 export type purchaseReturnMasterType = {
-    org_code: string;
-    pur_r_id: string;
     pur_r_date?: string;
-    supp_id: string;
+    supp_id?: string;
     discount?: number | string;
     vat?: number | string;
-    paid_amt: number | string;
+    paid_amt?: number | string;
     remark?: string
 }
 
 export type purchaseReturnDetailType = {
-    org_code: string;
-    pur_r_id: string;
-    pur_r_dt_id?: number;
+    // org_code: string;
+    // pur_r_id: string;
+    // pur_r_dt_id?: number;
     prod_id: string;
     uom: string | string;
     qty: number | string;

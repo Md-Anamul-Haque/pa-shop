@@ -100,17 +100,21 @@ const PurchesVendorInfo_input = (props: Props) => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid justify-center space-y-2">
           <div className="grid gap-3 w-full">
             <div className="flex flex-wrap items-center space-x-3">
-              <SelectSupplier onSelected={(sup: supplierType) => {
-                if (sup) {
-                  const { supp_id, supp_name, address, phone, email } = sup
-                  setSupplier({
-                    supp_id, supp_name, address, phone, email
-                  })
-                } else {
-                  setSupplier(undefined)
-                }
-              }}
-                value={supplier?.supp_id}
+              <SelectSupplier
+                onSelected={(sup: supplierType) => {
+                  if (sup) {
+                    const { supp_id, supp_name, address, phone, email } = sup
+                    setSupplier({
+                      supp_id, supp_name, address, phone, email
+                    })
+                  } else {
+                    setSupplier(undefined)
+                  }
+                }}
+                value={{
+                  id: supplier?.supp_id || '',
+                  label: supplier?.supp_name || ''
+                }}
               />
               <div >
                 <p className="mx-2 text-sm inline-block">{supplier?.supp_id || ''}</p>

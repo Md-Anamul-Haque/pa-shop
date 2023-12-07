@@ -2,10 +2,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 /* Instruments */
-import { purchaseDetailType, purchaseMasterType, supplierType } from '@/types/tables.type';
+import { purchaseDetailType as defpurchaseDetailType, purchaseReturnMasterType, supplierType } from '@/types/tables.type';
 import _ from 'lodash';
 
-const initialState: purchaseSliceState = {
+const initialState: purchaseEditSliceState = {
     purchaseDts: [],
     purchaseMt: { paid_amt: 0, supp_id: '', discount: 0, vat: 0 },
     supplier: undefined,
@@ -13,9 +13,13 @@ const initialState: purchaseSliceState = {
     _sum: 0
 
 };
+type purchaseDetailType = (defpurchaseDetailType & {
+    isThis?: ('edited' | 'new')
+})
+type purchaseDetailTypes = purchaseDetailType[];
 
 
-const get_sum = (state: purchaseSliceState) => {
+const get_sum = (state: purchaseEditSliceState) => {
     const newState = { ...state }
     if (newState.purchaseDts?.length) {
         const new_sum = ((_.sumBy(newState.purchaseDts, (purchase) => Number(purchase.qty) * Number(purchase.unit_price)) + Number(newState.purchaseMt?.vat || 0)) - Number(newState.purchaseMt?.discount || 0)) || 0
@@ -61,17 +65,7 @@ const nextIndex = (purchaseDts: purchaseDetailType[], idx: number, key: string, 
     return returnValue;
 };
 
-// function handleClearPurchase(state: purchaseSliceState) {
-//     state.isLoading = false
-//     state.purchaseDts = [];
-//     state.purchaseMt = { paid_amt: 0, supp_id: '', };
-//     state.supplier = undefined;
-//     state.isFocus = undefined;
-//     console.log('clear')
-//     console.log(state)
-//     return state;
-// }
-export const purchaseSlice = createSlice({
+export const purchaseEditSlice = createSlice({
     name: 'purchase',
     initialState,
     reducers: {
@@ -82,15 +76,24 @@ export const purchaseSlice = createSlice({
             state._sum = new_sum
         },
         pushPurchase(state, action: { payload: { purchaseDetail: purchaseDetailType } }) {
-            state.purchaseDts?.push(action.payload.purchaseDetail);
-            const new_sum = get_sum({ ...state, purchaseDts: [...state.purchaseDts || [], action.payload.purchaseDetail] })
+            state.purchaseDts?.push({ ...action.payload.purchaseDetail, isThis: 'new' });
+            const new_sum = get_sum({ ...state, purchaseDts: [...state.purchaseDts || [], { ...action.payload.purchaseDetail, isThis: 'new' }] })
             state._sum = new_sum
         },
         removePurchase(state, action: { payload: number }) {
-            const newDts = state?.purchaseDts?.filter((_pur, i) => action.payload !== i);
-            state.purchaseDts = newDts
-            const new_sum = get_sum({ ...state, purchaseDts: newDts })
-            state._sum = new_sum
+            let pur_id = '';
+            const newDts = state?.purchaseDts?.filter((pur, i) => {
+                if (action.payload !== i) {
+                    return true
+                } else {
+                    pur_id = pur.prod_id
+                    return false
+                }
+            });
+            state.purchaseDts = newDts;
+            const new_sum = get_sum({ ...state, purchaseDts: newDts });
+            state._sum = new_sum;
+            state.removed = [...state.removed || pur_id];
         },
         setPurchaseDt(state, action: { payload: { IndexPur: number, editedPur?: purchaseDetailType } }) {
             const purs = state.purchaseDts || [];
@@ -99,8 +102,8 @@ export const purchaseSlice = createSlice({
             if (IndexPur < 0 || IndexPur >= purs.length) {
                 console.error('Invalid index to edit.');
             }
-            const newDts = purs.map((pur, i) =>
-                i === IndexPur ? { ...pur, ...editedPur } : pur
+            const newDts: purchaseDetailTypes = purs.map((pur, i) =>
+                i === IndexPur ? { ...pur, ...editedPur, isThis: "edited" } : pur
             );
             state.purchaseDts = newDts
             const new_sum = get_sum({ ...state, purchaseDts: newDts })
@@ -131,24 +134,24 @@ export const purchaseSlice = createSlice({
         handleSetPaid_amt(state, action: { payload: number }) {
             state.purchaseMt = { ...state.purchaseMt, paid_amt: action.payload }
         },
-        handleSetPur_date(state, action: { payload: string | undefined }) {
-            state.purchaseMt = { ...state.purchaseMt, pur_date: action.payload }
+        handleSetPur_r_date(state, action: { payload: string | undefined }) {
+            state.purchaseMt = { ...state.purchaseMt, pur_r_date: action.payload }
         },
         clearPurchase(state) {
             state = initialState
-            // return handleClearPurchase(state);
         }
     },
 
 })
 
 /* Types */
-export interface purchaseSliceState {
+export interface purchaseEditSliceState {
     supplier?: supplierType;
-    purchaseDts?: purchaseDetailType[];
-    purchaseMt?: purchaseMasterType;
+    purchaseDts?: purchaseDetailTypes;
+    purchaseMt?: purchaseReturnMasterType;
     isFocus?: { key: string; rowNumber: number }
     isLoading: boolean;
+    removed?: string[];
     error?: string;
     _sum: number;
 }

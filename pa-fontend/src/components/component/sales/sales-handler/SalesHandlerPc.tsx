@@ -54,7 +54,7 @@ const SalesHandlerPc = ({ onNext, onSubmited }: { onNext: (incre: number) => voi
                 </form> */}
                 <span></span>
             </div>
-            <div ref={ref} className='relative h-fit overflow-auto '>
+            <div ref={ref} className='relative h-fit'>
                 <table className="colspan border-collapse w-full">
                     <thead className='sticky top-0 bg-accent z-10 h-fit w-full'>
                         <tr>
@@ -80,13 +80,13 @@ const SalesHandlerPc = ({ onNext, onSubmited }: { onNext: (incre: number) => voi
                             <td className='text-right border px-2 py-1'>{totalSumBy()}</td>
                         </tr>
                         <tr className='border'>
-                            <td className='text-right border px-2 py-1' colSpan={5}>
+                            <td className='text-right w-full border px-2 py-1' colSpan={5}>
                                 <span className='flex justify-end space-x-3 items-center'>
                                     pur_date <TimerIcon /> :
                                 </span>
                             </td>
-                            <td className='text-right border px-2 py-1'>
-                                <DatePicker value={saleMt?.sales_date ? new Date(saleMt?.sales_date) : undefined} onSelect={(date) => {
+                            <td className='text-right min-w-max border px-2 py-1'>
+                                <DatePicker className='w-36' value={saleMt?.sales_date ? new Date(saleMt?.sales_date) : typeof saleMt?.sales_date !== 'undefined' ? undefined : new Date()} onSelect={(date) => {
                                     dispatch(salesSlice.actions.handleSetSales_date(date?.toISOString()))
                                 }} />
                             </td>
@@ -144,7 +144,7 @@ const SalesHandlerPc = ({ onNext, onSubmited }: { onNext: (incre: number) => voi
                             </td>
                             <td>
                                 <ShadCnUiButton isLoading={isLoading} onClick={handleSubmit} className="w-full" type="submit" disabled={!(_sum || saleDts.length)}>
-                                    Purchase now
+                                    sell now
                                 </ShadCnUiButton>
                             </td>
                         </tr>

@@ -6,7 +6,7 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
-export function DatePicker({ onSelect, value }: { onSelect?: (date: Date | undefined) => any; value?: Date }) {
+export function DatePicker({ onSelect, value, className }: { onSelect?: (date: Date | undefined) => any; value?: Date; className?: string; }) {
     const [date, setDate] = useState<Date | undefined>(value || new Date())
     const handleChange = (d?: Date) => {
         onSelect && onSelect(d)
@@ -16,12 +16,12 @@ export function DatePicker({ onSelect, value }: { onSelect?: (date: Date | undef
         setDate(value)
     }, [value])
     return (
-        <Popover>
-            <PopoverTrigger asChild>
+        <Popover >
+            <PopoverTrigger className={className} asChild>
                 <Button
                     variant={"outline"}
                     className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full inline-flex justify-start text-left font-normal",
                         !date && "text-muted-foreground"
                     )}
                 >

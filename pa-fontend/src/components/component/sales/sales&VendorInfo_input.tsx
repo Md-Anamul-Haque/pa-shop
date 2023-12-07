@@ -17,6 +17,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 import NewCustomer from "../customer/NewCustomer";
 import SelectCustomer from "./selectCustomer";
+
 type customerSchemaType = {
   cust_name: string;
   address: string;
@@ -30,11 +31,13 @@ const formSchema: z.ZodType<customerSchemaType> = z.object({
   phone: z.string(),
   email: z.string().email(),
 });
+
 type Props = {
   onNext: (increment: number) => void;
   // supplier?: supplierType;
   onSaveChange: (customer: customerType) => void;
 }
+
 const SalesVendorInfo_input = (props: Props) => {
   const { customer: hasCustomer } = useSelector(selectSales);
   const [customer, setCustomer] = useState<customerType | undefined>(hasCustomer)
@@ -53,7 +56,6 @@ const SalesVendorInfo_input = (props: Props) => {
       phone: ''
     },
   });
-
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -82,6 +84,7 @@ const SalesVendorInfo_input = (props: Props) => {
     form.setValue('phone', customer?.phone || '')
   }, [customer]);
   const isDisable = !customer
+
   return (
     <div className="text-foreground grid justify-center space-y-2">
       {isLoading && <div className="w-full h-full absolute inset-0 animate-pulse bg-slate-500/30 bg-opacity-30 z-20 grid place-items-center">
@@ -104,9 +107,11 @@ const SalesVendorInfo_input = (props: Props) => {
                 } else {
                   setCustomer(undefined)
                 }
-
               }}
-                value={customer?.cust_id}
+                value={{
+                  id: customer?.cust_id || "",
+                  label: customer?.cust_name || ''
+                }}
               />
               <div >
                 <p className="mx-2 text-sm inline-block">{customer?.cust_id || ''}</p>
