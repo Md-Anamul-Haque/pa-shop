@@ -46,8 +46,13 @@ const validationPurchase_put = (req: Request) => {
     let { changeRows, newRows, deleteRows, mt }: reqBodyDataType = req.body;
     console.log({ changeRows })
     const org_code = req.auth?.user?.org_code as string;
-    const pur_id = req.params.slug
-    newRows = newRows?.map(dt => ({ ...dt, pur_id, org_code }))
+    const pur_id = req.params.slug;
+    newRows = newRows?.map(dt => ({
+        prod_id: dt.prod_id,
+        qty: Number(dt.qty),
+        unit_price: dt.unit_price,
+        pur_id, org_code
+    }));
     // ... handle PUT logic start hear
     const updateRowsData = changeRows?.map(dt => [
         Number(dt.pur_dt_id),

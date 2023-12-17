@@ -1,6 +1,6 @@
 import { purchaseDetailType } from '@/types/tables.type';
 
-import { purchaseSlice } from '@/lib/redux';
+import { purchaseEditSlice } from '@/lib/redux';
 import { ChangeEvent, FC, useEffect, useRef } from 'react';
 
 import MyInputNumber from '@/components/lui/MyInputNumber';
@@ -11,14 +11,13 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import SelectProduct from '../selectProduct';
-
+import SelectProduct from '../purchase/selectProduct';
 
 
 
 function ActionButton({ dispatch, indexOfrow, purchaseDt }: { dispatch: any; indexOfrow: number | number; purchaseDt?: purchaseDetailType; }) {
     const onRemove = () => {
-        dispatch(purchaseSlice.actions.removePurchase(indexOfrow))
+        dispatch(purchaseEditSlice.actions.removePurchase(indexOfrow))
     }
     if (!purchaseDt) {
         return (<span>{String(indexOfrow + 1)}</span>)
@@ -75,14 +74,14 @@ export const ProductTrPc: FC<trProps> = ({ dispatch, indexOfrow, purchaseDt, onC
         console.log(e.key)
         if (e.key == "ArrowUp") {
             e.preventDefault();
-            dispatch(purchaseSlice.actions.changeFocus({
+            dispatch(purchaseEditSlice.actions.changeFocus({
                 rowNumber: indexOfrow - 1,
                 key: name,
                 isNext: false,
             }));
         } else if (e.key == "ArrowDown") {
             e.preventDefault();
-            dispatch(purchaseSlice.actions.changeFocus({
+            dispatch(purchaseEditSlice.actions.changeFocus({
                 rowNumber: indexOfrow + 1,
                 key: name,
                 isNext: true

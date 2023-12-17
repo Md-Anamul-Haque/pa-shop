@@ -77,7 +77,7 @@ const SelectStockProduct = (props: Props) => {
             onFetch={handleFetch}
             onFetchNext={handleFetchNext}
             onSelect={props.onSelected}
-            name="product"
+            name=" product stock"
             placeholder="type (name/phone/..."
             selectLabel="--select product--"
             classNames={{

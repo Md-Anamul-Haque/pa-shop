@@ -5,10 +5,10 @@
   "author": "md-anamul-haque",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register' src/main.ts",
     "build": "tsc && tsc-alias",
+    "build:watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
     "start": "node dist/main.js",
-    "startts": "NODE_OPTIONS='-r tsconfig-paths/register' ts-node src/main.ts",
+    "dev": "nodemon",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -24,13 +24,14 @@
     "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": ">=6.0.0",
+    "concurrently": "^8.2.2",
     "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
     "eslint-plugin-promise": "^6.0.0",
     "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
     "typescript": "*"
@@ -49,6 +50,7 @@
     "pg": "^8.11.3",
     "pg-format": "^1.0.4",
     "postgres": "^3.4.2",
+    "rg-express": "^0.6.71",
     "sequelize": "^6.33.0",
     "strftime": "^0.10.2",
     "uuid": "^9.0.1"

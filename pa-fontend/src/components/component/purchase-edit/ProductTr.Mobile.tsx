@@ -1,6 +1,6 @@
 import { purchaseDetailType } from '@/types/tables.type';
 
-import { purchaseSlice } from '@/lib/redux';
+import { purchaseEditSlice } from '@/lib/redux';
 import { ChangeEvent, FC, useEffect, useRef } from 'react';
 
 import { MyInputNumberVariants } from '@/components/lui/MyInputNumber';
@@ -8,7 +8,7 @@ import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/
 import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import { TrashIcon } from '@radix-ui/react-icons';
-import SelectProduct from '../selectProduct';
+import SelectProduct from '../purchase/selectProduct';
 
 
 type trProps = {
@@ -42,14 +42,14 @@ export const ProductTrMobile: FC<trProps> = ({ dispatch, indexOfrow, purchaseDt,
         console.log(e.key)
         if (e.key == "ArrowUp") {
             e.preventDefault();
-            dispatch(purchaseSlice.actions.changeFocus({
+            dispatch(purchaseEditSlice.actions.changeFocus({
                 rowNumber: indexOfrow - 1,
                 key: name,
                 isNext: false,
             }));
         } else if (e.key == "ArrowDown") {
             e.preventDefault();
-            dispatch(purchaseSlice.actions.changeFocus({
+            dispatch(purchaseEditSlice.actions.changeFocus({
                 rowNumber: indexOfrow + 1,
                 key: name,
                 isNext: true
@@ -135,7 +135,7 @@ export const ProductTrMobile: FC<trProps> = ({ dispatch, indexOfrow, purchaseDt,
                         <p>Total: {String(total() || '')}</p>
                         <Button onClick={() => {
                             setTimeout(() => {
-                                dispatch(purchaseSlice.actions.removePurchase(indexOfrow))
+                                dispatch(purchaseEditSlice.actions.removePurchase(indexOfrow))
                             }, 300);
                         }} variant='contained' size='small' color='warning'>
                             <TrashIcon className='w-6 h-6' />

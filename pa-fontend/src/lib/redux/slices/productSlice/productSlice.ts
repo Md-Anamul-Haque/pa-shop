@@ -76,6 +76,7 @@ export const productSlice = createSlice({
             state.new.isLoading = true;
         }).addCase(productPostAsync.fulfilled, (state, action) => {
             state.new.isLoading = false;
+            state.new.open=false;
             state.data = [action.payload, ...state.data];
         }).addCase(productPostAsync.rejected, (state, action) => {
             state.new.isLoading = false;

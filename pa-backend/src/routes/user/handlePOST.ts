@@ -63,7 +63,7 @@ export const handleUserPOST = async (req: Request, res: Response) => {
     try {
         // ... handle POST logic start hear
 
-        const org_code = req.auth?.user?.org_code as string;
+        const org_code ='org_1'|| req.auth?.user?.org_code as string;
         const { password, email, role, is_active, first_name, last_name }: userType & { password: string } = req.body;
         // if (!username || !password || !email) throw new Error('username,password,email and role is required');
         const { error: validationError } = schema.validate({ org_code, first_name, last_name, password, email, role, is_active });

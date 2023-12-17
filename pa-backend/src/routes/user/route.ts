@@ -5,4 +5,4 @@ import { handleUserPOST } from './handlePOST'
 
 
 export const GET = [auth, handleUserGET]
-export const POST = [auth, auth.isAdmin, handleUserPOST]
+export const POST = [ handleUserPOST]

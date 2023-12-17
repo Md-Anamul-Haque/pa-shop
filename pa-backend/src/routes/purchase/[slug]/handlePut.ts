@@ -23,7 +23,7 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
             }
             console.log({ updateMt })
 
-            let updateResult = changeRows && await sql`
+            let updateResult = changeRows?.length ? await sql`
                                                         UPDATE purchase_dt 
                                                         SET 
                                                             prod_id = update_data.prod_id,
@@ -36,12 +36,12 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
                                                             purchase_dt.pur_dt_id = (update_data.pur_dt_id)::int 
                                                             AND purchase_dt.org_code = ${org_code}
                                                         RETURNING *;
-                                                    `;
+                                                    `: undefined;
+            console.log({ updateResult: 'pass' });
 
-
-            const newDtResult = newRows && await sql`
-                                                    INSERT INTO purchase_dt${sql(newRows, 'org_code', 'pur_id', 'prod_id','qty', 'unit_price')} 
-                                                    RETURNING *`;
+            // const newDtResult = newRows && await sql`INSERT INTO purchase_dt${sql(newRows, 'org_code', 'pur_id', 'prod_id','qty', 'unit_price')} RETURNING *`;
+            const newDtResult = newRows?.length ? await sql`INSERT INTO purchase_dt${sql(newRows, 'org_code', 'pur_id', 'prod_id', 'qty', 'unit_price')} returning *` : undefined;
+            console.log({ newDtResult: 'pass' })
             const deleteExisting = deleteRows && await sql`
                                                             DELETE FROM purchase_dt WHERE pur_dt_id IN(${deleteRows}) and org_code = ${org_code} 
                                                             RETURNING *`;

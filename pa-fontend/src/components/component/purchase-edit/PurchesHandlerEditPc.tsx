@@ -2,42 +2,36 @@ import { purchaseDetailType } from "@/types/tables.type";
 
 import { Button as ShadCnUiButton } from "@/components/ui/button";
 import {
-  purchaseSlice,
-  selectPurchase,
+  purchaseEditSlice,
+  selectPurchaseEdit,
   useDispatch,
   useSelector,
 } from "@/lib/redux";
 import { TextField } from "@mui/material";
-import Button from "@mui/material/Button";
+// import Button from "@mui/material/Button";
 import { TimerIcon } from "@radix-ui/react-icons";
 import _ from "lodash";
 import { useEffect, useRef, useState } from "react";
-import { DatePicker } from "../../DatePicker";
+import { DatePicker } from "../DatePicker";
 import { ProductTrPc as ProductTr } from "./ProductTr.pc";
-import { handleSubmitPurchase } from "./handleSubmitPurchase";
+import { handleSaveEditPurchase } from "./handleSaveEditPurchase";
 
-const PurchesHandlerPc = ({
-  onNext,
-  onSubmited,
-}: {
-  onNext: (incre: number) => void;
-  onSubmited: () => void;
-}) => {
+const PurchesHandlerEditPc = ({ onSubmited }: { onSubmited: () => void }) => {
   // const p: productType;
   const ref = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
+  const purchaseEditState= useSelector(selectPurchaseEdit);
   const {
     purchaseDts = [],
     isFocus,
     purchaseMt,
-    supplier,
     _sum,
-  } = useSelector(selectPurchase);
+  } =purchaseEditState
   const handleChangePurchaseInfo = (dt: purchaseDetailType, i: number) => {
     dispatch(
-      purchaseSlice.actions.setPurchaseDt({
+      purchaseEditSlice.actions.setPurchaseDt({
         IndexPur: i,
         editedPur: dt,
       })
@@ -46,7 +40,7 @@ const PurchesHandlerPc = ({
 
   const handlePushPurchaseInfo = (dt: purchaseDetailType) => {
     dispatch(
-      purchaseSlice.actions.pushPurchase({
+      purchaseEditSlice.actions.pushPurchase({
         purchaseDetail: dt,
       })
     );
@@ -64,30 +58,21 @@ const PurchesHandlerPc = ({
       (purchase) => Number(purchase.qty) * Number(purchase.unit_price)
     );
   const handleSubmit = async () => {
-    if (!supplier || !purchaseMt) {
-      console.log({ purchaseMt, supplier });
-      return;
-    }
-    handleSubmitPurchase({
-      isLoading,
-      purchaseDts,
-      purchaseMt,
-      setIsLoading,
-      supplier,
-      onSubmited,
+    // if (!supplier || !purchaseMt) {
+    //   console.log({ purchaseMt, supplier });
+    //   return;
+    // }
+    handleSaveEditPurchase({
+     isLoading,
+     onSubmited,
+     purchaseEditState,
+     setIsLoading
     });
   };
   return (
     <div className="w-full">
       <div className="flex justify-around items-center py-1">
-        <Button variant="contained" onClick={() => onNext(-1)}>
-          Back
-        </Button>
         <h1 className="text-xl">Purches List</h1>
-        {/* <form className="space-x-2">
-                    <Input label="search " className=" w-56" />
-                </form> */}
-        <span></span>
       </div>
       <div ref={ref} className="relative h-fit">
         <table className="colspan border-collapse w-full">
@@ -145,7 +130,7 @@ const PurchesHandlerPc = ({
                   }
                   onSelect={(date) => {
                     dispatch(
-                      purchaseSlice.actions.handleSetPur_date(
+                      purchaseEditSlice.actions.handleSetPur_date(
                         date?.toISOString()
                       )
                     );
@@ -166,8 +151,8 @@ const PurchesHandlerPc = ({
                   type="number"
                   onChange={(e) => {
                     dispatch(
-                      purchaseSlice.actions.handleSetDiscount(
-                        e.target.value.replace(/^0+(?=\d)/, "")
+                      purchaseEditSlice.actions.handleSetDiscount(
+                        Number(e.target.value || 0)
                       )
                     );
                   }}
@@ -189,8 +174,8 @@ const PurchesHandlerPc = ({
                   type="number"
                   onChange={(e) => {
                     dispatch(
-                      purchaseSlice.actions.handleSetVat(
-                        e.target.value.replace(/^0+(?=\d)/, "")
+                      purchaseEditSlice.actions.handleSetVat(
+                        Number(e.target.value || 0)
                       )
                     );
                   }}
@@ -212,8 +197,8 @@ const PurchesHandlerPc = ({
                   type="number"
                   onChange={(e) => {
                     dispatch(
-                      purchaseSlice.actions.handleSetPaid_amt(
-                        e.target.value.replace(/^0+(?=\d)/, "")
+                      purchaseEditSlice.actions.handleSetPaid_amt(
+                        Number(e.target.value || 0)
                       )
                     );
                   }}
@@ -231,15 +216,6 @@ const PurchesHandlerPc = ({
                 {_sum - Number(purchaseMt?.paid_amt || 0)}{" "}
               </td>
             </tr>
-            {/* 
-                        <tr className='border'>
-                            <td colSpan={2} className='text-right border px-2 py-1'>total amt:</td>
-                            <td className='text-right border px-2 py-1'>{_sum}</td>
-                            <td className='text-right border px-2 py-1' colSpan={2}>due:{'- ৳'} : </td>
-                            <td className='text-right border px-2 py-1'>
-                                {_sum - Number(purchaseMt?.paid_amt || 0)}
-                            </td>
-                        </tr> */}
             <tr>
               <td className="" colSpan={5}></td>
               <td>
@@ -250,7 +226,7 @@ const PurchesHandlerPc = ({
                   type="submit"
                   disabled={!(_sum || purchaseDts.length)}
                 >
-                  Purchase now
+                  save Change{' (Purchase)'}
                 </ShadCnUiButton>
               </td>
             </tr>
@@ -261,4 +237,4 @@ const PurchesHandlerPc = ({
   );
 };
 
-export default PurchesHandlerPc;
+export default PurchesHandlerEditPc;
