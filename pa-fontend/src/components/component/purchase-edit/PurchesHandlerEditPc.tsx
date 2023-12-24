@@ -22,13 +22,13 @@ const PurchesHandlerEditPc = ({ onSubmited }: { onSubmited: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
-  const purchaseEditState= useSelector(selectPurchaseEdit);
+  const purchaseEditState = useSelector(selectPurchaseEdit);
   const {
     purchaseDts = [],
     isFocus,
     purchaseMt,
     _sum,
-  } =purchaseEditState
+  } = purchaseEditState
   const handleChangePurchaseInfo = (dt: purchaseDetailType, i: number) => {
     dispatch(
       purchaseEditSlice.actions.setPurchaseDt({
@@ -63,10 +63,10 @@ const PurchesHandlerEditPc = ({ onSubmited }: { onSubmited: () => void }) => {
     //   return;
     // }
     handleSaveEditPurchase({
-     isLoading,
-     onSubmited,
-     purchaseEditState,
-     setIsLoading
+      isLoading,
+      onSubmited,
+      purchaseEditState,
+      setIsLoading
     });
   };
   return (
@@ -152,7 +152,7 @@ const PurchesHandlerEditPc = ({ onSubmited }: { onSubmited: () => void }) => {
                   onChange={(e) => {
                     dispatch(
                       purchaseEditSlice.actions.handleSetDiscount(
-                        Number(e.target.value || 0)
+                        e.target.value
                       )
                     );
                   }}
@@ -175,7 +175,7 @@ const PurchesHandlerEditPc = ({ onSubmited }: { onSubmited: () => void }) => {
                   onChange={(e) => {
                     dispatch(
                       purchaseEditSlice.actions.handleSetVat(
-                        Number(e.target.value || 0)
+                        e.target.value
                       )
                     );
                   }}
@@ -198,9 +198,10 @@ const PurchesHandlerEditPc = ({ onSubmited }: { onSubmited: () => void }) => {
                   onChange={(e) => {
                     dispatch(
                       purchaseEditSlice.actions.handleSetPaid_amt(
-                        Number(e.target.value || 0)
+                        e.target.value
                       )
                     );
+
                   }}
                   disabled={!(_sum || purchaseDts.length)}
                   required

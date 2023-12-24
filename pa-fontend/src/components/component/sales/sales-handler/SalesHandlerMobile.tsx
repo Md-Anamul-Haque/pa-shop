@@ -74,11 +74,8 @@ const SalesHandlerMobile = ({ onNext, onSubmited }: { onNext: (incre: number) =>
                     <ProductTrMobile dispatch={dispatch} onChange={handlePushSalesInfo} indexOfrow={saleDts.length} />
 
                 </Accordion>
-                {/* <div className='border mt-2 flex'>
-                    <p className='text-right border px-2 py-1'>_SUM : </p>
-                    <p className='text-right border px-2 py-1'>{_sum}</p>
-                </div> */}
-                <table className='border mt-3'>
+
+                {(_sum) && <table className='border mt-3'>
                     <tbody>
                         <tr className='border'>
                             <td className='text-right border px-2 py-1' >Totals: {'- ৳'}: </td>
@@ -152,7 +149,7 @@ const SalesHandlerMobile = ({ onNext, onSubmited }: { onNext: (incre: number) =>
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                </table>}
 
             </div>
         </div>

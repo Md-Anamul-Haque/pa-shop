@@ -16,7 +16,7 @@ const newRowSchema = Joi.object({
     org_code: Joi.string(),
     sales_id: Joi.string().required(),
     prod_id: Joi.string().required(),
-    uom: Joi.string().required(),
+    // uom: Joi.string().required(),
     qty: Joi.number().required(),
     unit_price: Joi.number().required(),
 });
@@ -24,7 +24,7 @@ const newRowSchema = Joi.object({
 const changeRowSchema = Joi.object({
     sales_dt_id: Joi.number().required(),
     prod_id: Joi.string().required(),
-    uom: Joi.string().required(),
+    // uom: Joi.string().required(),
     qty: Joi.number().required(),
     unit_price: Joi.number().required()
 });
@@ -48,7 +48,13 @@ const validationSales_put = (req: Request) => {
     const org_code = req.auth?.user?.org_code as string;
     const sales_id = req.params.slug
 
-    newRows = newRows?.map(dt => ({ ...dt, sales_id, org_code }))
+    newRows = newRows?.map(dt => ({
+        prod_id: dt.prod_id,
+        qty: dt.qty,
+        unit_price: dt.unit_price,
+        sales_id,
+        org_code
+    }))
 
 
     // ... handle PUT logic start hear

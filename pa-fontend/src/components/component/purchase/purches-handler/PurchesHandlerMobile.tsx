@@ -168,7 +168,7 @@ const PurchesHandlerMobile = ({
                     onChange={(e) => {
                       dispatch(
                         purchaseSlice.actions.handleSetDiscount(
-                          e.target.value.replace(/^0+(?=\d)/, "")
+                          e.target.value
                         )
                       );
                     }}
@@ -189,7 +189,7 @@ const PurchesHandlerMobile = ({
                     onChange={(e) => {
                       dispatch(
                         purchaseSlice.actions.handleSetVat(
-                          e.target.value.replace(/^0+(?=\d)/, "")
+                          e.target.value
                         )
                       );
                     }}
@@ -212,7 +212,7 @@ const PurchesHandlerMobile = ({
                     onChange={(e) => {
                       dispatch(
                         purchaseSlice.actions.handleSetPaid_amt(
-                          e.target.value.replace(/^0+(?=\d)/, "")
+                          e.target.value
                         )
                       );
                     }}

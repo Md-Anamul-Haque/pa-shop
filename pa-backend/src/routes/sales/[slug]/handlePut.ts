@@ -24,7 +24,7 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
             if (!updateMt?.length) {
                 throw new Error('updateMtData:' + 'not found')
             };
-            let updateResult = changeRows && await sql`
+            let updateResult = changeRows?.length ? await sql`
                 UPDATE sales_dt 
                 SET 
                     prod_id = update_data.prod_id,
@@ -38,10 +38,10 @@ export const handlePurchasePUT = async (req: Request, res: Response) => {
                     and
                     sales_dt.org_code= ${org_code}
                 RETURNING *;
-            `;
+            `: undefined;
 
-            const newDtResult = newRows && await sql`INSERT INTO sales_dt${sql(newRows, 'org_code', 'sales_id', 'prod_id', 'qty', 'unit_price')} returning *`;
-            const deleteExisting = deleteRows && await sql`DELETE FROM sales_dt WHERE sales_dt_id IN(${deleteRows}) and org_code = ${org_code} returning *`;
+            const newDtResult = newRows?.length ? await sql`INSERT INTO sales_dt${sql(newRows, 'org_code', 'sales_id', 'prod_id', 'qty', 'unit_price')} returning *` : undefined;
+            const deleteExisting = deleteRows?.length ? await sql`DELETE FROM sales_dt WHERE sales_dt_id IN(${deleteRows}) and org_code = ${org_code} returning *` : undefined;
             return { updateResult, updateMt, newDtResult, deleteExisting };
         });
 

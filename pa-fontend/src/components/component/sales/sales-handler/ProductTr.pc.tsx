@@ -37,8 +37,8 @@ function ActionButton({ dispatch, indexOfrow, saleDt }: { dispatch: any; indexOf
                     console.log(saleDt)
                     saleDt && onRemove()
                 }} value="delete">delete</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem onClick={() => alert('bottom')} value="bottom">Bottom</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem onClick={() => alert('right')} value="right">Right</DropdownMenuRadioItem>
+                {/* <DropdownMenuRadioItem onClick={() => alert('bottom')} value="bottom">Bottom</DropdownMenuRadioItem> */}
+                {/* <DropdownMenuRadioItem onClick={() => alert('right')} value="right">Right</DropdownMenuRadioItem> */}
             </DropdownMenuContent>
         </DropdownMenu>
     )

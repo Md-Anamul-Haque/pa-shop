@@ -65,6 +65,7 @@ const NewCustomer = ({ onNewSupplier, ...props }: Props) => {
         try {
             const newCust = await dispatch(customerPostAsync(values))
             onNewSupplier && onNewSupplier(newCust.payload)
+            form.reset()
         } catch (error: any) {
             console.log({ error })
         }
@@ -76,7 +77,7 @@ const NewCustomer = ({ onNewSupplier, ...props }: Props) => {
                 <AlertDialogTrigger className={buttonVariants({ size: 'sm', variant: "outline" })} onClick={handleOpen}>
                     <>
                         <PlusIcon className="h-5 w-5" />
-                        <span className={cn("hidden md:inline-block", props.triggerTextClass)}>New Supplier</span>
+                        <span className={cn("hidden md:inline-block", props.triggerTextClass)}>New customer</span>
                         {/* <span className="hidden md:inline-block" >New Customer</span> */}
                     </>
                 </AlertDialogTrigger>

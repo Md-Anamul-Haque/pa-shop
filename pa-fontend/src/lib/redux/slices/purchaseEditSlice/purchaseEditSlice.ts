@@ -3,12 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 /* Instruments */
 import {
+  purchaseDetailType as main_purchaseDetailType,
   purchaseMasterType,
   supplierType,
 } from "@/types/tables.type";
 import _ from "lodash";
 import { LoadEditableData } from "./thunks";
-import { purchaseEditDetailType } from "@/types/purchaseEditDetailType";
+import { handleIgnoreStartZero } from "@/lib/utils";
 
 const initialState: purchaseEditSliceState = {
   purchaseDts: [],
@@ -18,6 +19,9 @@ const initialState: purchaseEditSliceState = {
   isLoading: false,
   _sum: 0,
   isError: ''
+};
+export type purchaseEditDetailType = main_purchaseDetailType & {
+  isThis?: "edited" | "new";
 };
 
 type purchaseDetailTypes = purchaseEditDetailType[];
@@ -162,18 +166,18 @@ export const purchaseEditSlice = createSlice({
         console.log({ ...focus });
       }
     },
-    handleSetVat(state, action: { payload: number }) {
-      state.purchaseMt = { ...state.purchaseMt, vat: action.payload };
+    handleSetVat(state, action: { payload: string }) {
+      state.purchaseMt = { ...state.purchaseMt, vat: handleIgnoreStartZero(action.payload) };
       const new_sum = get_sum({
         ...state,
         purchaseMt: { ...state.purchaseMt, vat: action.payload },
       });
       state._sum = new_sum;
     },
-    handleSetDiscount(state, action: { payload: number }) {
+    handleSetDiscount(state, action: { payload: string }) {
       state.purchaseMt = {
         ...state.purchaseMt,
-        discount: Number(action.payload),
+        discount: handleIgnoreStartZero(action.payload)
       };
       const new_sum = get_sum({
         ...state,
@@ -181,15 +185,15 @@ export const purchaseEditSlice = createSlice({
       });
       state._sum = new_sum;
     },
-    handleSetPaid_amt(state, action: { payload: number | string }) {
-      state.purchaseMt = { ...state.purchaseMt, paid_amt: action.payload };
+    handleSetPaid_amt(state, action: { payload: string }) {
+      state.purchaseMt = { ...state.purchaseMt, paid_amt: handleIgnoreStartZero(action.payload) };
     },
     handleSetPur_date(state, action: { payload: string | undefined }) {
       state.purchaseMt = { ...state.purchaseMt, pur_date: action.payload };
     },
-    clearPurchase(state) {
+    clearPurchase: (state) => {
       state = initialState;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -201,6 +205,7 @@ export const purchaseEditSlice = createSlice({
         state.purchaseMt = action.payload.mt;
         state.purchaseDts = action.payload.dts;
         state.supplier = action.payload.supplier;
+        state._sum = get_sum({ ...state, purchaseMt: state.purchaseMt })
       }).addCase(LoadEditableData.rejected, (state, action) => {
         state.isFetchingData = false
         state.isError = String(action.error.message || action.error)
@@ -217,7 +222,7 @@ export interface purchaseEditSliceState {
   isLoading: boolean;
   isFetchingData: boolean;
   removed?: number[];
-  error?: string;
+  // error?: string;
   _sum: number;
   isError: string;
 }

@@ -27,3 +27,5 @@ export function buildApiUrl(baseUrl: string, endpoint: string, params?: Record<s
 }
 
 
+
+export const handleIgnoreStartZero = (v: string | number) => String(v).replace(/^0+(?=\d)/, "");

@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 /* Instruments */
 import { customerType, salesDetailType, salesMasterType } from '@/types/tables.type';
 import _ from 'lodash';
+import { handleIgnoreStartZero } from '@/lib/utils';
 
 const initialState: salesSliceState = {
     saleDts: [],
@@ -83,6 +84,7 @@ export const salesSlice = createSlice({
             state._sum = get_sum({ ...state, saleDts: [...state.saleDts || [], action.payload.saleDetail] });
         },
         removeSale(state, action: { payload: number }) {
+            // alert('removed is:' + action.payload)
             const newDts = state?.saleDts?.filter((_sal, i) => action.payload !== i);
             state.saleDts = newDts
             state._sum = get_sum({ ...state, saleDts: newDts });
@@ -110,25 +112,24 @@ export const salesSlice = createSlice({
                 console.log({ ...focus })
             }
         },
-        handleSetVat(state, action: { payload: (number | string) }) {
-            state.saleMt = { ...state.saleMt, vat: action.payload }
+        handleSetVat(state, action: { payload: (string) }) {
+            state.saleMt = { ...state.saleMt, vat: handleIgnoreStartZero(action.payload) }
             const new_sum = get_sum({ ...state, saleMt: { ...state.saleMt, vat: action.payload } });
             state._sum = new_sum
         },
-        handleSetDiscount(state, action: { payload: (number | string) }) {
-            state.saleMt = { ...state.saleMt, discount: action.payload }
+        handleSetDiscount(state, action: { payload: (string) }) {
+            state.saleMt = { ...state.saleMt, discount: handleIgnoreStartZero(action.payload) }
             const new_sum = get_sum({ ...state, saleMt: { ...state.saleMt, discount: action.payload } });
             state._sum = new_sum
         },
-        handleSetPaid_amt(state, action: { payload: number | string }) {
-            state.saleMt = { ...state.saleMt, paid_amt: action.payload }
+        handleSetPaid_amt(state, action: { payload: string }) {
+            state.saleMt = { ...state.saleMt, paid_amt: handleIgnoreStartZero(action.payload) }
             // state.due = state._sum - Number(action.payload || 0)
         },
         handleSetSales_date(state, action: { payload: string | undefined }) {
             state.saleMt = { ...state.saleMt, sales_date: action.payload }
         },
-        clearSales(state) {
-            // return handleClearSales(state);
+        clearSales: (state) => {
             state = initialState
         }
     },

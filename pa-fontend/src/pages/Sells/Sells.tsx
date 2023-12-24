@@ -1,6 +1,6 @@
 import SalesVendorInfo_input from "@/components/component/sales/sales&VendorInfo_input";
 import SalesHandler from "@/components/component/sales/sales-handler";
-import { purchaseSlice, salesSlice, useDispatch } from "@/lib/redux";
+import { salesSlice, useDispatch } from "@/lib/redux";
 import { customerType } from "@/types/tables.type";
 import { Step, StepLabel, Stepper } from "@mui/material";
 import { useState } from "react";
@@ -38,7 +38,7 @@ const Sales = () => {
                     </div>
                     <SalesHandler
                         onSubmited={() => {
-                            dispatch(purchaseSlice.actions.clearPurchase())
+                            dispatch(salesSlice.actions.clearSales())
                             setActiveStep(0)
                         }}
                         onNext={incre => setActiveStep(activeStep + incre)} />
@@ -48,7 +48,7 @@ const Sales = () => {
                 </div>}
             {/* {activeStep === 2 && <>
                 <MTdataInput onSubmited={() => {
-                    dispatch(purchaseSlice.actions.clearPurchase())
+                    dispatch(salesSlice.actions.clearPurchase())
                     setActiveStep(0)
                 }} onNext={incre => setActiveStep(activeStep + incre)} />
             </>} */}

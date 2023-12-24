@@ -1,16 +1,8 @@
 import ApiClient from "@/lib/ApiClient";
-import { purchaseEditSliceState, selectPurchaseEdit, useSelector } from "@/lib/redux";
-import { purchaseEditDetailType } from "@/types/purchaseEditDetailType";
-import { purchaseDetailType, purchaseMasterType, supplierType } from "@/types/tables.type";
+import { purchaseEditSliceState } from "@/lib/redux";
 const purchaseApi = new ApiClient('/api/purchase');
-type reqBodyDataType = {
-    newRows?: purchaseDetailType[];
-    deleteRows?: number[];
-    changeRows?: purchaseDetailType[];
-    mt?: purchaseMasterType;
-}
+
 export const handleSaveEditPurchase = async ({ purchaseEditState, isLoading, setIsLoading, onSubmited }: { purchaseEditState: purchaseEditSliceState; isLoading: boolean, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>, onSubmited: () => void }) => {
-    // e.preventDefault()
     const {
         purchaseDts = [],
         purchaseMt,

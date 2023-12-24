@@ -1,5 +1,6 @@
 /* Instruments */
-import { counterSlice, customerSlice, productSlice, purchaseEditSlice, purchaseListSlice, purchaseSlice, salesSlice, supplierSlice, userSlice } from './slices';
+import { counterSlice, customerSlice, productSlice, purchaseEditSlice, purchaseListSlice, purchaseSlice, salesEditSlice, salesReturn_Slice, salesSlice, supplierSlice, userSlice } from './slices';
+import { purchaseReturn_Slice } from './slices/purchaseReturn';
 
 export const reducer = {
     counter: counterSlice.reducer,
@@ -10,5 +11,8 @@ export const reducer = {
     purchase: purchaseSlice.reducer,
     purchaseList: purchaseListSlice.reducer,
     purchaseEdit: purchaseEditSlice.reducer,
-    sale: salesSlice.reducer
+    sale: salesSlice.reducer,
+    saleEdit: salesEditSlice.reducer,
+    purchaseReturn: purchaseReturn_Slice.reducer,
+    salesReturn: salesReturn_Slice.reducer,
 };

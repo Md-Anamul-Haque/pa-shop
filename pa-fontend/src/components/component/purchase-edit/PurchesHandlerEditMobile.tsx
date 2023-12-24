@@ -19,8 +19,8 @@ const PurchesListEditMobile = ({ onSubmited }: { onSubmited: () => void; }) => {
     const dispatch = useDispatch()
     const [defaultValue, setDefaultValue] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-    const purchaseEditState= useSelector(selectPurchaseEdit);
-    const { purchaseDts = [], isFocus, purchaseMt, _sum } =purchaseEditState
+    const purchaseEditState = useSelector(selectPurchaseEdit);
+    const { purchaseDts = [], isFocus, purchaseMt, _sum } = purchaseEditState
     const handleChangePurchaseInfo = (dt: purchaseDetailType, i: number) => {
         dispatch(purchaseEditSlice.actions.setPurchaseDt({
             IndexPur: i, editedPur: dt
@@ -102,7 +102,7 @@ const PurchesListEditMobile = ({ onSubmited }: { onSubmited: () => void; }) => {
                                 <td className='text-right border px-2 py-1' >discount:{'- ৳'} : </td>
                                 <td className='text-right border px-2 py-1'>
                                     <TextField fullWidth value={purchaseMt?.discount} size="small" label="discount:{'- ৳'}" type="number" onChange={e => {
-                                        dispatch(purchaseEditSlice.actions.handleSetDiscount(Number(e.target.value || 0)))
+                                        dispatch(purchaseEditSlice.actions.handleSetDiscount(e.target.value))
                                     }}
                                         disabled={!(_sum || purchaseDts.length)}
                                         required />
@@ -113,7 +113,7 @@ const PurchesListEditMobile = ({ onSubmited }: { onSubmited: () => void; }) => {
                                 <td className='text-right border px-2 py-1'>
                                     <TextField fullWidth value={purchaseMt?.vat} size="small" label="vat:{'- ৳'}" type="number"
                                         onChange={e => {
-                                            dispatch(purchaseEditSlice.actions.handleSetVat(Number(e.target.value || 0)))
+                                            dispatch(purchaseEditSlice.actions.handleSetVat(e.target.value))
                                         }}
                                         disabled={!(_sum || purchaseDts.length)}
                                         required />
@@ -124,7 +124,7 @@ const PurchesListEditMobile = ({ onSubmited }: { onSubmited: () => void; }) => {
                                 <td className='text-right border px-2 py-1'>
                                     <TextField fullWidth value={purchaseMt?.paid_amt} size="small" label="paid_amt:{'- ৳'}" type="number"
                                         onChange={e => {
-                                            dispatch(purchaseEditSlice.actions.handleSetPaid_amt(Number(e.target.value || 0)))
+                                            dispatch(purchaseEditSlice.actions.handleSetPaid_amt(e.target.value))
                                         }}
                                         disabled={!(_sum || purchaseDts.length)}
                                         required />
@@ -136,7 +136,7 @@ const PurchesListEditMobile = ({ onSubmited }: { onSubmited: () => void; }) => {
                             <tr>
                                 <td className='' colSpan={6}>
                                     <ShadCnUiButton isLoading={isLoading} onClick={handleSubmit} className="w-full" type="submit" disabled={!(_sum || purchaseDts.length)}>
-                                    save Change{' (Purchase)'}
+                                        save Change{' (Purchase)'}
                                     </ShadCnUiButton>
                                 </td>
                             </tr>

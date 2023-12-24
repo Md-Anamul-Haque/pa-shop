@@ -11,6 +11,9 @@ import Sales from "./pages/Sells/Sells.tsx";
 import Suppliers from "./pages/Supplier/Supplier.tsx";
 import Users from "./pages/User/User.tsx";
 import PurchaseEdit from "./pages/Purchase/edit/PurchaseEdit.tsx";
+import SaleEdit from "./pages/Sells/edit/SellsEdit.tsx";
+import PurchaseReturnPage from "./pages/Purchase/return/PurchaseReturn.tsx";
+import SalesReturnPage from "./pages/Sells/return/SaleReturn.tsx";
 const router = createBrowserRouter([
   {
     path: "login",
@@ -59,9 +62,21 @@ const router = createBrowserRouter([
         element: <PurchaseEdit />,
       },
       {
-        path: "sale",
+        path: 'purchase/return',
+        element: <PurchaseReturnPage />
+      },
+      {
+        path: "sales",
         element: <Sales />,
       },
+      {
+        path: "sales/return",
+        element: <SalesReturnPage />
+      },
+      {
+        path: "sales/:sales_id",
+        element: <SaleEdit />
+      }
     ],
   },
 ]);

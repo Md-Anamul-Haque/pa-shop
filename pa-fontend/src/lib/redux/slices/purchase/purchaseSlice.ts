@@ -8,6 +8,7 @@ import {
   supplierType,
 } from "@/types/tables.type";
 import _ from "lodash";
+import { handleIgnoreStartZero } from "@/lib/utils";
 
 const initialState: purchaseSliceState = {
   purchaseDts: [],
@@ -25,8 +26,8 @@ const get_sum = (state: purchaseSliceState) => {
         newState.purchaseDts,
         (purchase) => Number(purchase.qty) * Number(purchase.unit_price)
       ) +
-        Number(newState.purchaseMt?.vat || 0) -
-        Number(newState.purchaseMt?.discount || 0) || 0;
+      Number(newState.purchaseMt?.vat || 0) -
+      Number(newState.purchaseMt?.discount || 0) || 0;
     return new_sum;
   } else {
     return 0;
@@ -153,8 +154,8 @@ export const purchaseSlice = createSlice({
         console.log({ ...focus });
       }
     },
-    handleSetVat(state, action: { payload: number | string }) {
-      state.purchaseMt = { ...state.purchaseMt, vat: action.payload };
+    handleSetVat(state, action: { payload: string }) {
+      state.purchaseMt = { ...state.purchaseMt, vat: handleIgnoreStartZero(action.payload) };
       const new_sum = get_sum({
         ...state,
         purchaseMt: { ...state.purchaseMt, vat: action.payload },
@@ -162,10 +163,10 @@ export const purchaseSlice = createSlice({
       state._sum = new_sum;
       // alert(new_sum)
     },
-    handleSetDiscount(state, action: { payload: number | string }) {
+    handleSetDiscount(state, action: { payload: string }) {
       state.purchaseMt = {
         ...state.purchaseMt,
-        discount: action.payload,
+        discount: handleIgnoreStartZero(action.payload),
       };
       const new_sum = get_sum({
         ...state,
@@ -173,13 +174,13 @@ export const purchaseSlice = createSlice({
       });
       state._sum = new_sum;
     },
-    handleSetPaid_amt(state, action: { payload: number | string }) {
-      state.purchaseMt = { ...state.purchaseMt, paid_amt: action.payload };
+    handleSetPaid_amt(state, action: { payload: string }) {
+      state.purchaseMt = { ...state.purchaseMt, paid_amt: handleIgnoreStartZero(action.payload) };
     },
     handleSetPur_date(state, action: { payload: string | undefined }) {
       state.purchaseMt = { ...state.purchaseMt, pur_date: action.payload };
     },
-    clearPurchase(state) {
+    clearPurchase: (state) => {
       state = initialState;
       // return handleClearPurchase(state);
     },

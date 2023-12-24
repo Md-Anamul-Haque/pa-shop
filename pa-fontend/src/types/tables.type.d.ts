@@ -62,13 +62,17 @@ export type purchaseReturnDetailType = {
     // org_code: string;
     // pur_r_id: string;
     // pur_r_dt_id?: number;
+    prod_name?: string;
     prod_id: string;
     uom: string | string;
     qty: number | string;
     unit_price: number | string;
+
+    stocProduct?: stockType;
 }
 
 export type salesMasterType = {
+    sales_id?: string;
     sales_date?: string;
     cust_id?: string;
     discount?: number | string;
@@ -79,6 +83,7 @@ export type salesMasterType = {
 export type salesDetailType = {
     // sales_id: string;
     prod_name?: string;
+    sales_dt_id?: number;
     prod_id: string;
     uom: string;
     qty: number | string;
@@ -88,24 +93,24 @@ export type salesDetailType = {
     stocProduct?: stockType;
 }
 export type salesReturnMasterType = {
-    org_code: string;
-    sales_r_id: string;
-    sales_r_date: string;
-    cust_id: string;
-    discount?: number;
-    vat?: number;
-    paid_amt: number;
-    remark: string;
+    // org_code: string;
+    // sales_r_id: string;
+    sales_r_date?: string;
+    cust_id?: string;
+    discount?: number | string;
+    vat?: number | string;
+    paid_amt?: string | number;
+    remark?: string;
 }
 
 export type salesReturnDetailType = {
-    org_code: string;
-    sales_r_dt_id?: number;
-    sales_r_id: string;
+    // sales_r_dt_id?: number;
+    sales_r_id?: string;
     prod_id: string;
-    uom: string;
-    qty: number;
-    unit_price: number;
+    prod_name?: string;
+    uom?: string;
+    qty?: number | string;
+    unit_price?: number | string;
 }
 export type supplierType = {
     org_code?: string;

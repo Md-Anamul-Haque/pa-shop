@@ -1,7 +1,7 @@
 import PurchesEditHandler from "@/components/component/purchase-edit";
 import { Card } from "@/components/ui/card";
 import { purchaseEditSlice, selectPurchaseEdit, useDispatch, useSelector } from "@/lib/redux";
-import { LoadEditableData } from "@/lib/redux/slices/purchaseEdit/thunks";
+import { LoadEditableData } from "@/lib/redux/slices/purchaseEditSlice/thunks";
 import { supplierType } from "@/types/tables.type";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -12,9 +12,9 @@ const PurchaseEdit = () => {
   const setSupplier = useCallback((supplier: supplierType) => {
     dispatch(purchaseEditSlice.actions.setSupplier(supplier));
   }, []);
-  const {isFetchingData,isError,purchaseDts}=useSelector(selectPurchaseEdit)
+  const { isFetchingData, isError } = useSelector(selectPurchaseEdit)
   useEffect(() => {
-    if(!pur_id){
+    if (!pur_id) {
       alert('pur_id is undefiend')
       return
     }
@@ -37,7 +37,6 @@ const PurchaseEdit = () => {
           alert("ok submitted");
         }}
       />
-      {JSON.stringify(purchaseDts)}
     </div>
   );
 };

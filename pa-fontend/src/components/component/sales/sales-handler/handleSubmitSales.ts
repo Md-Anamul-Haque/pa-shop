@@ -1,6 +1,6 @@
 import ApiClient from "@/lib/ApiClient";
 import { customerType, salesDetailType, salesMasterType } from "@/types/tables.type";
-const purchaseApi = new ApiClient('/api/purchase');
+const purchaseApi = new ApiClient('/api/sales');
 
 export const handleSubmitSales = async ({ customer, saleMt, saleDts, isLoading, setIsLoading, onSubmited }: { customer: customerType, saleMt: salesMasterType, saleDts: salesDetailType[], isLoading: boolean, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>, onSubmited: () => void }) => {
     if (isLoading) return

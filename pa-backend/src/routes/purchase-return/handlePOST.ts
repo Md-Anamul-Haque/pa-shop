@@ -12,7 +12,7 @@ const newRowSchema = Joi.object({
     org_code: Joi.string(),
     pur_r_id: Joi.string().required(),
     prod_id: Joi.string().required(),
-    uom: Joi.string().required(),
+    // uom: Joi.string().required(),
     qty: Joi.number().required(),
     unit_price: Joi.number().required(),
 });
@@ -70,7 +70,7 @@ export const handlePurchasePOST = async (req: Request, res: Response) => {
                     org_code,
                     pur_r_id: purchaseMtResult.pur_r_id,
                     prod_id: dt.prod_id,
-                    uom: dt.uom,
+                    // uom: dt.uom,
                     qty: Number(dt.qty),
                     unit_price: Number(dt.unit_price),
                 }
@@ -79,7 +79,7 @@ export const handlePurchasePOST = async (req: Request, res: Response) => {
             if (validationError_dt) {
                 throw new Error('newdt:' + validationError_dt.details[0].message)
             }
-            const purchaseDtResult = await sql`INSERT INTO purchase_return_dt ${sql(newPurchaseDtValues, 'org_code', 'pur_r_id', 'prod_id', 'uom', 'qty', 'unit_price')} returning *`;
+            const purchaseDtResult = await sql`INSERT INTO purchase_return_dt ${sql(newPurchaseDtValues, 'org_code', 'pur_r_id', 'prod_id', 'qty', 'unit_price')} returning *`;
             return [purchaseMtResult, purchaseDtResult]
         });
         if (purchaseMtResult) {
