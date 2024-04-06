@@ -180,8 +180,9 @@ export const purchaseSlice = createSlice({
     handleSetPur_date(state, action: { payload: string | undefined }) {
       state.purchaseMt = { ...state.purchaseMt, pur_date: action.payload };
     },
-    clearPurchase: (state) => {
-      state = initialState;
+    // @ts-ignore
+    clearPurchase(state) {
+      state = { ...initialState };
       // return handleClearPurchase(state);
     },
   },

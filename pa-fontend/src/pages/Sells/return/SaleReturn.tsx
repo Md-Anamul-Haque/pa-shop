@@ -1,6 +1,6 @@
 import SaleReturnHandler from "@/components/component/sales-return";
 import SalesVendorInfo_input from "@/components/component/sales/sales&VendorInfo_input";
-import { purchaseSlice, salesReturn_Slice, useDispatch } from "@/lib/redux";
+import { purchaseSlice, salesReturn_Slice, selectSalesReturn, useDispatch, useSelector } from "@/lib/redux";
 import { customerType } from "@/types/tables.type";
 import { Step, StepLabel, Stepper } from "@mui/material";
 import { useState } from "react";
@@ -11,9 +11,8 @@ const steps = [
 
 const SalesReturnPage = () => {
     const [activeStep, setActiveStep] = useState(0);
-    // const { supplier, purchaseDts } = useSelector(selectPurchase);
     const dispatch = useDispatch();
-
+    const { customer } = useSelector(selectSalesReturn);
     const setCustomer = (customer: customerType) => {
         dispatch(salesReturn_Slice.actions.setCustomer(customer));
     };
@@ -30,7 +29,7 @@ const SalesReturnPage = () => {
                     ))}
                 </Stepper>
             </div>
-            {activeStep === 0 && <SalesVendorInfo_input onSaveChange={setCustomer} onNext={incre => setActiveStep(activeStep + incre)} />}
+            {activeStep === 0 && <SalesVendorInfo_input customer={customer} onSaveChange={setCustomer} onNext={incre => setActiveStep(activeStep + incre)} />}
             {activeStep === 1
                 && <div className="w-full h-full overflow-auto flex">
                     <div className="hidden lg:inline-block mr-20 bg-slate-500  w-52">

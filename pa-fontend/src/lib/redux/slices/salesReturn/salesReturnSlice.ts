@@ -120,8 +120,9 @@ export const salesReturn_Slice = createSlice({
         handleSetPur_r_date(state, action: { payload: string | undefined }) {
             state.saleMt = { ...state.saleMt, sales_r_date: action.payload }
         },
-        clearPurs: (state) => {
-            state = initialState
+        // @ts-ignore
+        clearPurs(state) {
+            state = { ...initialState };
         }
     },
 })

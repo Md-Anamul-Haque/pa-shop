@@ -11,35 +11,31 @@ import {
   FormItem,
   FormMessage
 } from "@/components/ui/form";
-import { customerPutAsync, useDispatch } from "@/lib/redux";
-import { customerType } from "@/types/tables.type";
+import { supplierPutAsync, useDispatch } from "@/lib/redux";
+import { supplierType } from "@/types/tables.type";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
-import NewCustomer from "../customer/NewCustomer";
-import SelectCustomer from "./selectCustomer";
-
-type customerSchemaType = {
-  cust_name: string;
+import SelectSupplier from "./selectSupplier";
+import NewSupplier from "@/components/component/supplier/NewSupplier";
+type supplierSchemaType = {
+  supp_name: string;
   address: string;
   phone: string;
   email?: string;
-};
-
-const formSchema: z.ZodType<customerSchemaType> = z.object({
-  cust_name: z.string().min(1),
+}
+const formSchema: z.ZodType<supplierSchemaType> = z.object({
+  supp_name: z.string().min(1),
   address: z.string(),
   phone: z.string(),
   email: z.string().email(),
 });
-
 type Props = {
   onNext: (increment: number) => void;
-  customer?: customerType
-  onSaveChange: (customer: customerType) => void;
+  supplier?: supplierType;
+  onSaveChange: (supplier: supplierType) => void;
 }
-
-const SalesVendorInfo_input = (props: Props) => {
-  const [customer, setCustomer] = useState<customerType | undefined>(props.customer)
+const InputSupplierVandor = (props: Props) => {
+  const [supplier, setSupplier] = useState<supplierType | undefined>(props.supplier)
   const [isLoading, setIsLoading] = useState(false)
   const [isError, setisError] = useState('')
   const [isSomeEdit, setisSomeEdit] = useState(false)
@@ -49,22 +45,23 @@ const SalesVendorInfo_input = (props: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cust_name: '',
+      supp_name: '',
       address: '',
       email: '',
       phone: ''
     },
   });
 
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (customer) {
+    if (supplier) {
       try {
         if (!isSomeEdit) return;
         setIsLoading(true)
-        const { cust_id, cust_name, address, phone, email } = await (await dispatch(customerPutAsync({ ...values, cust_id: customer.cust_id }))).payload
-        setCustomer({
-          cust_id, cust_name, address, phone, email
+        const { supp_id, supp_name, address, phone, email } = await (await dispatch(supplierPutAsync({ ...values, supp_id: supplier.supp_id }))).payload
+        setSupplier({
+          supp_id, supp_name, address, phone, email
         })
         // onSaveChange(a.payload)
         setIsLoading(false)
@@ -77,13 +74,12 @@ const SalesVendorInfo_input = (props: Props) => {
   }
 
   useEffect(() => {
-    form.setValue('cust_name', customer?.cust_name || '')
-    form.setValue('address', customer?.address || '')
-    form.setValue('email', customer?.email || '')
-    form.setValue('phone', customer?.phone || '')
-  }, [customer]);
-  const isDisable = !customer
-
+    form.setValue('supp_name', supplier?.supp_name || '')
+    form.setValue('address', supplier?.address || '')
+    form.setValue('email', supplier?.email || '')
+    form.setValue('phone', supplier?.phone || '')
+  }, [supplier]);
+  const isDisable = !supplier
   return (
     <div className="text-foreground grid justify-center space-y-2">
       {isLoading && <div className="w-full h-full absolute inset-0 animate-pulse bg-slate-500/30 bg-opacity-30 z-20 grid place-items-center">
@@ -92,34 +88,40 @@ const SalesVendorInfo_input = (props: Props) => {
           {/* <TimerIcon className="h-12 w-12 pt-3 animate-bounce" /> */}
         </div>
       </div>}
-
+      {/* <div className="ml-auto">
+        <NewSupplier triggerTextClass="inline-block" onNewSupplier={(supp) => {
+          console.log({ supp })
+          setSupplier(supp)
+        }} />
+      </div> */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid justify-center space-y-2">
           <div className="grid gap-3 w-full">
             <div className="flex flex-wrap items-center space-x-3">
-              <SelectCustomer onSelected={(cust: customerType) => {
-                if (cust) {
-                  const { cust_id, cust_name, address, phone, email } = cust;
-                  setCustomer({
-                    cust_id, cust_name, address, phone, email
-                  })
-                } else {
-                  setCustomer(undefined)
-                }
-              }}
+              <SelectSupplier
+                onSelected={(sup: supplierType) => {
+                  if (sup) {
+                    const { supp_id, supp_name, address, phone, email } = sup
+                    setSupplier({
+                      supp_id, supp_name, address, phone, email
+                    })
+                  } else {
+                    setSupplier(undefined)
+                  }
+                }}
                 value={{
-                  id: customer?.cust_id || "",
-                  label: customer?.cust_name || ''
+                  id: supplier?.supp_id || '',
+                  label: supplier?.supp_name || ''
                 }}
               />
               <div >
-                <p className="mx-2 text-sm inline-block">{customer?.cust_id || ''}</p>
+                <p className="mx-2 text-sm inline-block">{supplier?.supp_id || ''}</p>
 
                 <Button disabled={!isSomeEdit} onClick={() => {
-                  form.setValue('cust_name', customer?.cust_name || '')
-                  form.setValue('address', customer?.address || '')
-                  form.setValue('email', customer?.email || '')
-                  form.setValue('phone', customer?.phone || '')
+                  form.setValue('supp_name', supplier?.supp_name || '')
+                  form.setValue('address', supplier?.address || '')
+                  form.setValue('email', supplier?.email || '')
+                  form.setValue('phone', supplier?.phone || '')
                   setisSomeEdit(false)
                 }}>
                   <Tooltip title="undo/resat">
@@ -129,7 +131,7 @@ const SalesVendorInfo_input = (props: Props) => {
                   </Tooltip>
                 </Button>
                 <Button disabled={isDisable} onClick={() => {
-                  setCustomer(undefined)
+                  setSupplier(undefined)
                   setisSomeEdit(false)
                 }}>
                   <Tooltip title="clear">
@@ -142,7 +144,7 @@ const SalesVendorInfo_input = (props: Props) => {
             </div>
             <FormField
               control={form.control}
-              name="cust_name"
+              name="supp_name"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -226,18 +228,18 @@ const SalesVendorInfo_input = (props: Props) => {
             {isSomeEdit ? <Button type="submit" size="small" variant="outlined">SAVE CHANGE</Button> : <span></span>}
             <Button type="button" size="small" onClick={() => {
               props.onNext(1)
-              customer?.cust_id && props.onSaveChange(customer)
-            }} variant="contained" disabled={!customer?.cust_id} className="justify-self-end">Next</Button>
+              supplier?.supp_id && props.onSaveChange(supplier)
+            }} variant="contained" disabled={!supplier?.supp_id} className="justify-self-end">Next</Button>
           </div>
           <hr />
         </form>
-        <NewCustomer triggerTextClass="inline-block" onNewSupplier={(supp) => {
+        <NewSupplier triggerTextClass="inline-block" onNewSupplier={(supp) => {
           console.log({ supp })
-          setCustomer(supp)
+          setSupplier(supp)
         }} />
       </Form>
     </div>
   );
 };
 
-export default SalesVendorInfo_input
+export default InputSupplierVandor

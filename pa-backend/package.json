@@ -50,7 +50,6 @@
     "pg": "^8.11.3",
     "pg-format": "^1.0.4",
     "postgres": "^3.4.2",
-    "rg-express": "^0.6.71",
     "sequelize": "^6.33.0",
     "strftime": "^0.10.2",
     "uuid": "^9.0.1"

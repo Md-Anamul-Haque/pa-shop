@@ -10,12 +10,34 @@ export const handlePurchaseGET = async (req: Request, res: Response) => {
         const limit = Number(pageSize);
         const org_code = req.auth?.user?.org_code
         // Query to fetch purchases with pagination
+        //         const query = `
+        //     SELECT pur_id,supp_id,pur_date FROM purchase_mt
+        //     WHERE org_code = $1
+        //     ORDER BY updated_at
+        //     LIMIT $2 OFFSET $3;
+        //   `;
         const query = `
-    SELECT pur_id,supp_id,pur_date FROM purchase_mt
-    WHERE org_code = $1
-    ORDER BY updated_at
-    LIMIT $2 OFFSET $3;
-  `;
+        SELECT 
+    mt.pur_id,
+    -- mt.supp_id,
+    mt.discount,
+    mt.vat,
+    mt.paid_amt,
+    sup.supp_name,
+    mt.pur_date,
+    (SELECT SUM(dt.unit_price * dt.qty) FROM purchase_dt dt WHERE dt.pur_id = mt.pur_id AND dt.org_code = mt.org_code) AS total_purchase_amount
+FROM 
+    purchase_mt mt
+JOIN 
+    supplier sup ON mt.org_code = sup.org_code AND mt.supp_id = sup.supp_id
+WHERE 
+    mt.org_code = $1
+ORDER BY 
+    mt.updated_at
+LIMIT 
+    $2 OFFSET $3;
+
+`;
         const { rows: purchases } = await pool.query(query, [org_code, limit, offset]);
         if (purchases) {
             return ResponseHandler(res, {

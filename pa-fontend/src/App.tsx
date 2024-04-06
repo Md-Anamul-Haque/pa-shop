@@ -14,6 +14,7 @@ import PurchaseEdit from "./pages/Purchase/edit/PurchaseEdit.tsx";
 import SaleEdit from "./pages/Sells/edit/SellsEdit.tsx";
 import PurchaseReturnPage from "./pages/Purchase/return/PurchaseReturn.tsx";
 import SalesReturnPage from "./pages/Sells/return/SaleReturn.tsx";
+import SalesList from "./pages/Sells/list/SalesList.tsx";
 const router = createBrowserRouter([
   {
     path: "login",
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: "sales/return",
         element: <SalesReturnPage />
+      },
+      {
+        path: "sales/list",
+        element: <SalesList />
       },
       {
         path: "sales/:sales_id",

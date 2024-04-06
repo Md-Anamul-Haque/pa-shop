@@ -79,9 +79,10 @@ export const salesSlice = createSlice({
         setCustomer(state, action: { payload: customerType }) {
             state.customer = action.payload;
         },
-        pushSale(state, action: { payload: { saleDetail: salesDetailType } }) {
-            state.saleDts?.push(action.payload.saleDetail);
-            state._sum = get_sum({ ...state, saleDts: [...state.saleDts || [], action.payload.saleDetail] });
+        pushSale(state, action: { payload: Record<string, any> }) {
+            const salesDetailData = action.payload as salesDetailType
+            state.saleDts?.push(salesDetailData);
+            state._sum = get_sum({ ...state, saleDts: [...state.saleDts || [], salesDetailData] });
         },
         removeSale(state, action: { payload: number }) {
             // alert('removed is:' + action.payload)
@@ -89,7 +90,7 @@ export const salesSlice = createSlice({
             state.saleDts = newDts
             state._sum = get_sum({ ...state, saleDts: newDts });
         },
-        setSaleDt(state, action: { payload: { IndexSale: number, editedSale?: salesDetailType } }) {
+        setSaleDt(state, action: { payload: { IndexSale: number, editedSale?: Record<string, any> } }) {
             const sales = state.saleDts || [];
             const editedSale = action.payload.editedSale;
             const IndexSale = action.payload.IndexSale;
@@ -129,8 +130,9 @@ export const salesSlice = createSlice({
         handleSetSales_date(state, action: { payload: string | undefined }) {
             state.saleMt = { ...state.saleMt, sales_date: action.payload }
         },
-        clearSales: (state) => {
-            state = initialState
+        // @ts-ignore
+        clearSales(state) {
+            state = { ...initialState }
         }
     },
 })

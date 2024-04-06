@@ -1,9 +1,10 @@
 import SalesVendorInfo_input from "@/components/component/sales/sales&VendorInfo_input";
 import SalesHandler from "@/components/component/sales/sales-handler";
-import { salesSlice, useDispatch } from "@/lib/redux";
+import { salesSlice, selectSales, useDispatch } from "@/lib/redux";
 import { customerType } from "@/types/tables.type";
 import { Step, StepLabel, Stepper } from "@mui/material";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 const steps = [
     'Select Customer',
     'makes lists',
@@ -17,6 +18,8 @@ const Sales = () => {
     const setCustomer = (customer: customerType) => {
         dispatch(salesSlice.actions.setCustomer(customer));
     };
+    const { customer } = useSelector(selectSales);
+
     return (
         <div className="my-5 grid">
             <div className="overflow-auto">
@@ -30,7 +33,7 @@ const Sales = () => {
                     ))}
                 </Stepper>
             </div>
-            {activeStep === 0 && <SalesVendorInfo_input onSaveChange={setCustomer} onNext={incre => setActiveStep(activeStep + incre)} />}
+            {activeStep === 0 && <SalesVendorInfo_input customer={customer} onSaveChange={setCustomer} onNext={incre => setActiveStep(activeStep + incre)} />}
             {activeStep === 1
                 && <div className="w-full h-full overflow-auto flex">
                     <div className="hidden lg:inline-block mr-20 bg-slate-500  w-52">

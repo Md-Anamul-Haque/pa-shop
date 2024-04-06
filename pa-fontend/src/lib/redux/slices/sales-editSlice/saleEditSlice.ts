@@ -185,6 +185,7 @@ export const salesEditSlice = createSlice({
     handleSetSales_date(state, action: { payload: string | undefined }) {
       state.saleMt = { ...state.saleMt, sales_date: action.payload };
     },
+    // @ts-ignore
     clearSales(state) {
       state = initialState;
     }

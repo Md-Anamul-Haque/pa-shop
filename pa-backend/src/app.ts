@@ -4,8 +4,8 @@ import strftime from 'strftime';
 
 import cors from 'cors';
 import { NextFunction, Request, Response } from 'express';
-import rg from 'rg-express';
-// import rg  from 'C:/Users/anamul/Desktop/rg-express/dist/index.js' ;
+// import rg from 'rg-express';
+import rg from 'C:/Users/anamul/Desktop/rg-express/dist/index.js';
 
 import { ResponseHandler } from './helpers/ResponseHandler';
 
@@ -21,12 +21,7 @@ app.use(cors());
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.static('public'));
 
-app.get('/ip', (req, res) => {
-        ResponseHandler(res, {
-                payload: req.ip,
-        });
-        console.log(req.ip)
-});
+
 // dynamic routes 
 app.use(rg.routes(__dirname))
 //--------------- app route not found error-----------------------

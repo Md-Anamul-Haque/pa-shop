@@ -119,8 +119,9 @@ export const purchaseReturn_Slice = createSlice({
         handleSetPur_r_date(state, action: { payload: string | undefined }) {
             state.purchaseMt = { ...state.purchaseMt, pur_r_date: action.payload }
         },
+        // @ts-ignore
         clearPurs(state) {
-            state = initialState
+            state = { ...initialState }
         }
     },
 })

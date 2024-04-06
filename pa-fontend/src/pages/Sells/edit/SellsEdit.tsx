@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 const SaleEdit = () => {
     const dispatch = useDispatch();
     let { sales_id } = useParams();
+
     const setSupplier = useCallback((supplier: supplierType) => {
         dispatch(purchaseEditSlice.actions.setSupplier(supplier));
     }, []);

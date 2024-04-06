@@ -15,8 +15,8 @@ import { customerPutAsync, useDispatch } from "@/lib/redux";
 import { customerType } from "@/types/tables.type";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
-import NewCustomer from "../customer/NewCustomer";
 import SelectCustomer from "./selectCustomer";
+import NewCustomer from "@/components/component/customer/NewCustomer";
 
 type customerSchemaType = {
   cust_name: string;
@@ -38,7 +38,7 @@ type Props = {
   onSaveChange: (customer: customerType) => void;
 }
 
-const SalesVendorInfo_input = (props: Props) => {
+const InputCustomerVandor = (props: Props) => {
   const [customer, setCustomer] = useState<customerType | undefined>(props.customer)
   const [isLoading, setIsLoading] = useState(false)
   const [isError, setisError] = useState('')
@@ -240,4 +240,4 @@ const SalesVendorInfo_input = (props: Props) => {
   );
 };
 
-export default SalesVendorInfo_input
+export default InputCustomerVandor
